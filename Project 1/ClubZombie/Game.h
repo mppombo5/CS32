@@ -5,7 +5,7 @@
 #ifndef CLUBZOMBIE_GAME_H
 #define CLUBZOMBIE_GAME_H
 
-#include "Arena.h"
+class Arena;
 
 int decodeDirection(char dir);
 

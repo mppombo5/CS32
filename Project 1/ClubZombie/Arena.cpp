@@ -3,8 +3,9 @@
 //
 
 #include <iostream>
-#include "globals.h"
+
 #include "Arena.h"
+#include "Zombie.h"
 #include "Player.h"
 using namespace std;
 

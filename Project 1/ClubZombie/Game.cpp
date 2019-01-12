@@ -3,6 +3,9 @@
 //
 
 #include <iostream>
+
+#include "Arena.h"
+#include "Player.h"
 #include "Game.h"
 #include "globals.h"
 using namespace std;

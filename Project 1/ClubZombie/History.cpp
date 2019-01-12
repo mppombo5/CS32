@@ -5,8 +5,6 @@
 #include <iostream>
 
 #include "History.h"
-#include "Arena.h"
-#include "globals.h"
 using namespace std;
 
 History::History(int nRows, int nCols) {

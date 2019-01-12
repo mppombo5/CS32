@@ -5,10 +5,11 @@
 #ifndef CLUBZOMBIE_ARENA_H
 #define CLUBZOMBIE_ARENA_H
 
-#include "Player.h"
-#include "Zombie.h"
 #include "History.h"
 #include "globals.h"
+
+class Player;
+class Zombie;
 
 class Arena
 {

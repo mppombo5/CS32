@@ -2,10 +2,10 @@
 // Created by Matthew Pombo on 2019-01-10.
 //
 
+#include <iostream>
+
 #include "Zombie.h"
 #include "Arena.h"
-#include "globals.h"
-#include <iostream>
 using namespace std;
 
 Zombie::Zombie(Arena* ap, int r, int c)
