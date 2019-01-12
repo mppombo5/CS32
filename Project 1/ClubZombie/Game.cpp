@@ -73,7 +73,7 @@ void Game::play()
     while ( ! m_arena->player()->isDead()  &&  m_arena->zombieCount() > 0)
     {
         cout << endl;
-        cout << "Move (u/d/l/r//q): ";
+        cout << "Move (u/d/l/r//h/q): ";
         string action;
         getline(cin,action);
         if (action.size() == 0)  // player stands
@@ -92,6 +92,11 @@ void Game::play()
                 case 'l':
                 case 'r':
                     p->moveOrAttack(decodeDirection(action[0]));
+                    break;
+                case 'h':
+                    m_arena->history().display();
+                    cout << "Press enter to continue.";
+                    cin.ignore(10000, '\n');
                     break;
             }
         }

@@ -18,5 +18,6 @@ const int NUMDIRS = 4;
 
 int randInt(int min, int max);
 void clearScreen();
+char gridToChar(int num);
 
 #endif //CLUBZOMBIE_GLOBALS_H

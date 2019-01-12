@@ -53,3 +53,15 @@ void clearScreen()  // will just write a newline in an Xcode output window
 }
 
 #endif
+
+char gridToChar(int num) {
+    if (num == 0)
+        return '.';
+    else if (num >= 1 && num < 26) {
+        return (char) (num - 1) + 'A';
+    }
+    else if (num >= 26)
+        return 'Z';
+    else
+        return '.';
+}
