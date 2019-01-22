@@ -30,6 +30,7 @@ bool Set::insert(const ItemType& value) {
 
     m_set[m_size] = value;
     m_size++;
+    return true;
 }
 
 bool Set::erase(const ItemType& value) {
@@ -56,18 +57,29 @@ bool Set::contains(const ItemType& value) const {
     return false;
 }
 
-// implementation not done
 bool Set::get(int i, ItemType& value) const {
-    if (! (0 <= i && i < m_size) )
+    if ( !(0 <= i && i < m_size) )
         return false;
 
-    // iString (index string) is used to compare
-    string iString;
-    for (int k = 0; k < i; k++) {
-        for (int j = 0; j < m_size; j++) {
-
+    ItemType word;
+    // just do the same comparison each loop
+    for (int j = 0; j < m_size; j++) {
+        word = m_set[j];
+        int counter = 0;
+        for (int k = 0; k < m_size; k++) {
+            if (k == j)
+                continue;
+            else {
+                if (m_set[k] < word)
+                    counter++;
+            }
         }
+        if (counter == i)
+            break;
     }
+
+    value = word;
+    return true;
 }
 
 void Set::swap(Set& other) {
@@ -75,7 +87,7 @@ void Set::swap(Set& other) {
     if (other.size() > m_size)
         greater = other.size();
     for (int i = 0; i < greater; i++) {
-        string temp = m_set[i];
+        ItemType temp = m_set[i];
         m_set[i] = other.m_set[i];
         other.m_set[i] = temp;
     }
