@@ -1,9 +1,10 @@
 //
-// Created by Matthew Pombo on 2019-01-16.
+// Created by Matthew Pombo on 2019-01-22.
 //
 
-#ifndef HOMEWORK_1_SET_H
-#define HOMEWORK_1_SET_H
+#ifndef HOMEWORK_1_NEWSET_H
+#define HOMEWORK_1_NEWSET_H
+
 using namespace std;
 using ItemType = string;
 
@@ -11,11 +12,19 @@ const int DEFAULT_MAX_ITEMS = 250;
 
 class Set {
 public:
-    Set();         // Create an empty set (i.e., one with no items).
+    Set();                  // Create an empty set (i.e., one with no items).
 
-    bool empty() const;  // Return true if the set is empty, otherwise false.
+    Set(int max);           // Constructor for different max sizes.
 
-    int size() const;    // Return the number of items in the set.
+    ~Set();                 // Destructor
+
+    Set(const Set& source); // Copy constructor
+
+    Set& operator=(const Set& source); // Assignment operator
+
+    bool empty() const;     // Return true if the set is empty, otherwise false.
+
+    int size() const;       // Return the number of items in the set.
 
     bool insert(const ItemType& value);
     // Insert value into the set if it is not already present.  Return
@@ -44,8 +53,9 @@ public:
     // Output every item in the list to cerr
 
 private:
-    ItemType m_set[DEFAULT_MAX_ITEMS];
-    int      m_size;
+    ItemType* m_set;
+    int       m_size;
+    int       m_max;
 };
 
-#endif //HOMEWORK_1_SET_H
+#endif //HOMEWORK_1_NEWSET_H

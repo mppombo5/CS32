@@ -3,4 +3,4 @@ project(Homework_1)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Homework_1 main.cpp Set.cpp Set.h)
+add_executable(Homework_1 main.cpp Set.cpp Set.h SSNSet.cpp SSNSet.h testSSNSet.cpp newSet.cpp newSet.h testnewSet.cpp testSet.cpp)
