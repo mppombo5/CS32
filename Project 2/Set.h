@@ -7,12 +7,6 @@
 
 using ItemType = std::string;
 
-struct Node {
-    ItemType value;
-    Node*    next;
-    Node*    prev;
-};
-
 class Set
 {
 public:
@@ -35,10 +29,17 @@ public:
     void swap(Set& other);
 
 private:
+    struct Node {
+        ItemType value;
+        Node*    next;
+        Node*    prev;
+    };
     // dummy node, never has any values but gets rid of special cases
     Node* dummyHead;
     Node* tail;
     int   m_size;
+
+
 };
 
 
