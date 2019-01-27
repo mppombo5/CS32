@@ -10,12 +10,6 @@ using ItemType = std::string;
 class Set
 {
 public:
-    ///////////////////////////////////////////////
-    // REMEMBER TO REMOVE THIS BEFORE TURNING IN //
-    ///////////////////////////////////////////////
-    void dump() const;
-    void dumpBackwards() const;
-
     Set();
     ~Set();
     Set(const Set& src);
@@ -27,6 +21,7 @@ public:
     bool contains(const ItemType& value) const;
     bool get(int pos, ItemType& value) const;
     void swap(Set& other);
+    void dump() const;
 
 private:
     struct Node {
@@ -34,13 +29,15 @@ private:
         Node*    next;
         Node*    prev;
     };
-    // dummy node, never has any values but gets rid of special cases
+
+    // the head is a dummy node, never has any values but gets rid of special cases
     Node* dummyHead;
     Node* tail;
     int   m_size;
-
-
 };
+
+void unite(const Set& s1, const Set& s2, Set& result);
+void subtract(const Set& s1, const Set& s2, Set& result);
 
 
 #endif //PROJECT_2_SET_H

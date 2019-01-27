@@ -2,61 +2,36 @@
 // Created by Matthew Pombo on 2019-01-23.
 //
 
+// TODO: check for aliasing in unite and subtract
+
 #include <iostream>
 #include <string>
 #include "Set.h"
 using namespace std;
 
-//////////////////////////////////////////////////
-/// REMEMBER TO REMOVE THESE BEFORE TURNING IN ///
-//////////////////////////////////////////////////
-void Set::dump() const {
-    if (this->empty()) {
-        cerr << "This bitch empty" << endl << "Y E E T" << endl;
-        return;
-    }
-    for (Node* p = dummyHead->next; p != nullptr; p = p->next) {
-        cerr << p->value << endl;
-    }
-}
-void Set::dumpBackwards() const {
-    if (this->empty()) {
-        cerr << "This bitch empty" << endl << "Y E E T" << endl;
-        return;
-    }
-    for (Node* p = tail; p != dummyHead; p = p->prev) {
-        cerr << p->value << endl;
-    }
-}
-
-
-// after this is fair game
-
-
-
 Set::Set() {
+    // create head node, set next and previous to nullptr
     dummyHead = new Node;
     dummyHead->next = nullptr;
     dummyHead->prev = nullptr;
-    dummyHead->value = "E R R O R ! This better not pop up anywhere.";
+    // dummyHead->value = "E R R O R ! This better not pop up anywhere.";
     tail = dummyHead;
     m_size = 0;
 }
 
 Set::~Set() {
-    Node* p;
-    for (p = dummyHead->next; p != nullptr; p = p->next) {
+    // start deleting from head's next, delete the previous and eventually you'll just be left with tail
+    for (Node* p = dummyHead->next; p != nullptr; p = p->next)
         delete p->prev;
-    }
     delete tail;
-    cerr << "shit's destroyed" << endl;
 }
 
 Set::Set(const Set& src) {
+    // the first part is exactly the same as the normal constructor
     dummyHead = new Node;
     dummyHead->next = nullptr;
     dummyHead->prev = nullptr;
-    dummyHead->value = "E R R O R ! This better not pop up anywhere.";
+    //dummyHead->value = "E R R O R ! This better not pop up anywhere.";
     tail = dummyHead;
     // this is the only part that's different than the default constructor,
     // copy all the values in and it should work out fine... right?
@@ -67,24 +42,20 @@ Set::Set(const Set& src) {
 }
 
 Set& Set::operator=(const Set& src) {
-    if (&src == this) {
+    if (&src == this)
         return *this;
-    }
-    // just copy over the stuff from the destructor
-    Node* p;
-    for (p = dummyHead->next; p != nullptr; p = p->next) {
-        delete p->prev;
-    }
-    delete tail;
+
+    // call the destructor to delete everything
+    this->~Set();
 
     // then do the stuff from the copy constructor
     dummyHead = new Node;
     dummyHead->next = nullptr;
     dummyHead->prev = nullptr;
-    dummyHead->value = "E R R O R ! This better not pop up anywhere.";
+    //dummyHead->value = "E R R O R ! This better not pop up anywhere.";
     tail = dummyHead;
-    for (Node* i = src.dummyHead->next; i != nullptr; i = i->next) {
-        insert(i->value);
+    for (Node* p = src.dummyHead->next; p != nullptr; p = p->next) {
+        insert(p->value);
     }
     m_size = src.m_size;
     return *this;
@@ -100,10 +71,8 @@ int Set::size() const {
 
 bool Set::insert(const ItemType& value) {
     // first check if the value is already in the list
-    for (Node* p = dummyHead->next; p != nullptr; p = p->next) {
-        if (p->value == value)
-            return false;
-    }
+    if (contains(value))
+        return false;
     Node* p = new Node;
     p->value = value;
     Node* k = tail;
@@ -116,8 +85,11 @@ bool Set::insert(const ItemType& value) {
 }
 
 bool Set::erase(const ItemType& value) {
-    Node* p;
-    for (p = dummyHead->next; p != nullptr; p = p->next) {
+    if (empty())
+        return false;
+
+    for (Node* p = dummyHead->next; p != nullptr; p = p->next) {
+        // traverse the list and see if any of the values match
         if (p->value == value) {
             Node* target = p;
             p = p->prev;
@@ -135,9 +107,8 @@ bool Set::erase(const ItemType& value) {
 }
 
 bool Set::contains(const ItemType& value) const {
-    Node* p;
     // simple traversal and comparison
-    for (p = dummyHead->next; p != nullptr; p = p->next) {
+    for (Node* p = dummyHead->next; p != nullptr; p = p->next) {
         if (p->value == value)
             return true;
     }
@@ -156,10 +127,10 @@ bool Set::get(int pos, ItemType& value) const {
         item = p->value;
         int counter = 0;
         for (Node* k = dummyHead->next; k != nullptr; k = k->next) {
-            if (p == k)
-                continue;
-            if (k->value < item)
-                counter++;
+            if (p != k) {
+                if (k->value < item)
+                    counter++;
+            }
         }
         if (counter == pos)
             break;
@@ -169,10 +140,46 @@ bool Set::get(int pos, ItemType& value) const {
 }
 
 void Set::swap(Set& other) {
-    // this takes one line to do, because I correctly implemented the copy constructor and assignment operator.
-
     std::swap(*this, other);
-
     // my first implementation of this took somewhere around 40-50 lines of code.
     // it's bittersweet.
+}
+
+void Set::dump() const {
+    if (empty()) {
+        cerr << "This bitch empty; Y E E T" << endl;
+        return;
+    }
+    for (Node* p = dummyHead->next; p != nullptr; p = p->next) {
+        cerr << p->value << endl;
+    }
+}
+
+void unite(const Set& s1, const Set& s2, Set& result) {
+    // first thing to do is make result an empty set
+    Set temp;
+    // then go through and just add  each thing  from s1 and s2, insert will prevent duplicates
+    for (int i = 0; i < s1.size(); i++) {
+        ItemType item;
+        s1.get(i, item);
+        temp.insert(item);
+    }
+    for (int i = 0; i < s2.size(); i++) {
+        ItemType item;
+        s2.get(i, item);
+        temp.insert(item);
+    }
+    result = temp;
+}
+
+void subtract(const Set& s1, const Set& s2, Set& result) {
+    // again, first make sure result is empty
+    Set temp;
+    for (int i = 0; i < s1.size(); i++) {
+        ItemType item;
+        s1.get(i, item);
+        if (!s2.contains(item))
+            temp.insert(item);
+    }
+    result = temp;
 }
