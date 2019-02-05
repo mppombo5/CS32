@@ -3,4 +3,5 @@ project(Homework_2)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Homework_2 mazestack.cpp)
+add_executable(MazeQueue mazequeue.cpp)
+add_executable(MazeStack mazestack.cpp)

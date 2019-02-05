@@ -1,0 +1,79 @@
+2. First 12 coordinates popped off of cStack
+Scratch work:
+First coord: (3,5) <== 1
+=====
+(4,5) <== 11
+(3,4) <== 3
+(3,6) <== 2
+=====
+(3,3) <== 10
+(2,4) <== 4
+=====
+(1,4) <== 5
+=====
+(1,3) <== 6
+=====
+(1,2) <== 7
+=====
+(1,1) <== 8
+=====
+(2,1) <== 9
+=====
+(5,5) <== 12
+
+So, the first 12 coordinates popped off the stack are:
+(3,5)
+(3,6)
+(3,4)
+(2,4)
+(1,4)
+(1,3)
+(1,2)
+(1,1)
+(2,1)
+(3,3)
+(4,5)
+(5,5)
+
+
+4. The first 12 items popped off of cQueue
+Scratch work: S/W/N/E
+First coord: (3,5) <== 1
+=====
+(4,5) <== 2
+(3,4) <== 3
+(3,6) <== 4
+=====
+(5,5) <== 5
+=====
+(3,3) <== 6
+(2,4) <== 7
+=====
+(6,5) <== 8
+(5,4) <== 9
+=====
+(1,4) <== 10
+=====
+(7,5) <== 11
+=====
+(5,3) <== 12
+=====
+(1,3)
+=====
+(8,5)
+
+So, the first 12 coordinates popped off the queue are:
+(3,5)
+(4,5)
+(3,4)
+(3,6)
+(5,5)
+(3,3)
+(2,4)
+(6,5)
+(5,4)
+(1,4)
+(7,5)
+(5,3)
+
+In the queue implementation, the coordinates have their surroundings checked in the order in which they're added to the data structure – in the stack implementation, one path is thoroughly checked until it runs into a dead end. The queue implementation could be considered to be better, since in a sense it checks all the possible routes along the way, allowing the maze to be solved quicker more of the time.

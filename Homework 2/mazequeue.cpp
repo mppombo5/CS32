@@ -1,9 +1,9 @@
 //
-// Created by Matthew Pombo on 2019-02-02.
+// Created by Matthew Pombo on 2019-02-03.
 //
 
 #include <iostream>
-#include <stack>
+#include <queue>
 using namespace std;
 
 const char UPDATED = ' ';
@@ -20,33 +20,33 @@ private:
 };
 
 bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int ec) {
-    stack<Coord> cStack;
-    cStack.push(Coord(sr,sc));
+    queue<Coord> cQueue;
+    cQueue.push(Coord(sr,sc));
     maze[sr][sc] = UPDATED;
 
-    while (!cStack.empty()) {
-        Coord c = cStack.top();
-        cStack.pop();
+    while (!cQueue.empty()) {
+        Coord c = cQueue.front();
+        cQueue.pop();
         if (c.r() == er && c.c() == ec)
             return true;
         // South
         if (maze[c.r()+1][c.c()] == '.') {
-            cStack.push(Coord(c.r()+1, c.c()));
+            cQueue.push(Coord(c.r()+1, c.c()));
             maze[c.r()+1][c.c()] = UPDATED;
         }
         // West
         if (maze[c.r()][c.c()-1] == '.') {
-            cStack.push(Coord(c.r(), c.c()-1));
+            cQueue.push(Coord(c.r(), c.c()-1));
             maze[c.r()][c.c()-1] = UPDATED;
         }
         // North
         if (maze[c.r()-1][c.c()] == '.') {
-            cStack.push(Coord(c.r()-1, c.c()));
+            cQueue.push(Coord(c.r()-1, c.c()));
             maze[c.r()-1][c.c()] = UPDATED;
         }
         // East
         if (maze[c.r()][c.c()+1] == '.') {
-            cStack.push(Coord(c.r(), c.c()+1));
+            cQueue.push(Coord(c.r(), c.c()+1));
             maze[c.r()][c.c()+1] = UPDATED;
         }
     }
@@ -55,21 +55,20 @@ bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int
 
 int main() {
     string maze[10] = {
-            "XXXXXXXXXX",
-            "X....X...X",
-            "X.XX.XX..X",
-            "XXX....X.X",
-            "X.XXX.XXXX",
-            "X.X...X..X",
-            "X...X.X..X",
-            "XXXXX.X.XX",
-            "X........X",
-            "XXXXXXXXXX"
+        "XXXXXXXXXX",
+        "X....X...X",
+        "X.XX.XX..X",
+        "XXX....X.X",
+        "X.XXX.XXXX",
+        "X.X...X..X",
+        "X...X.X..X",
+        "XXXXX.X.XX",
+        "X........X",
+        "XXXXXXXXXX"
     };
 
     if (pathExists(maze, 10,10, 3,5, 8,8))
         cout << "Solvable!" << endl;
     else
         cout << "Out of luck!" << endl;
-    return 0;
 }
