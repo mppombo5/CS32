@@ -58,7 +58,7 @@ int main() {
         "XXXXXXXXXX",
         "X....X...X",
         "X.XX.XX..X",
-        "XXX....X.X",
+        "XXX......X",
         "X.XXX.XXXX",
         "X.X...X..X",
         "X...X.X..X",
@@ -67,7 +67,7 @@ int main() {
         "XXXXXXXXXX"
     };
 
-    if (pathExists(maze, 10,10, 3,5, 8,8))
+    if (pathExists(maze, 10,10, 3,5, 1,8))
         cout << "Solvable!" << endl;
     else
         cout << "Out of luck!" << endl;

@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(MazeQueue mazequeue.cpp)
 add_executable(MazeStack mazestack.cpp)
+add_executable(Eval eval.cpp Set.cpp)
