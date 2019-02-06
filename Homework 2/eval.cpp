@@ -10,7 +10,6 @@
 #include "Set.h"
 using namespace std;
 
-bool validInfix(const string& infix);
 bool infixToPostfix(const string& infix, string& postfix);
 int precedence(const char& ch);
 bool evalPostfix(const string& postfix, const Set& trues, const Set& falses);
@@ -42,54 +41,60 @@ int evaluate(string infix, const Set& trueValues, const Set& falseValues, string
     }
 }
 
-bool validInfix(string infix) {
-    string tempNoSpace;
-    for (int k = 0; k != infix.size(); k++) {
-        if (infix[k] != ' ')
-            tempNoSpace += infix[k];
-    }
-    infix = tempNoSpace;
-    // infix now has no spaces and has no invalid characters, makes checks easier
-    delete &tempNoSpace;
-    for (int k = 0; k != infix.size(); k++) {
-        if (! (islower(infix[k]) || infix[k] == '&' || infix[k] == '|' || infix[k] == '!') )
-            return false;
-
-    }
-}
-
 // return true if it's a valid infix expression, false if not
 // it also turns postfix into a postfix expression
 bool infixToPostfix(const string& infix, string& postfix) {
     // "ops" means "operators"
-    stack<char> ops;
+    stack<char> operators;
+    stack<char> parens;
+    // infixNoSpaces used to check for validity so we can ignore spaces
+    string infixNS;
+    // "insi" = infixNoSpaces index
+    size_t insi = 0;
     string post;
+    if (infix.empty())
+        return false;
     for (size_t k = 0; k != infix.size(); k++) {
         char ch = infix[k];
-
         // I found it easier to implement this in an if-else block than a switch statement
+
         if (islower(ch)) {
+            if (insi > 0 && islower(infixNS[insi-1]))
+                return false;
             post += ch;
+            infixNS += ch;
+            insi++;
         }
 
         else if (ch == '(') {
-            ops.push(ch);
+            if (insi > 0 && (islower(infixNS[insi-1])))
+                return false;
+            operators.push(ch);
+            parens.push(ch);
+            infixNS += ch;
+            insi++;
         }
 
         else if (ch == ')') {
-            while (ops.top() != '(') {
-                post += ops.top();
-                ops.pop();
+            while (operators.top() != '(') {
+                post += operators.top();
+                operators.pop();
             }
-            ops.pop();
+            operators.pop();
+            if (parens.empty() || parens.top() != '(')
+                return false;
+            infixNS += ch;
+            insi++;
         }
 
         else if (ch == '!' || ch == '&' || ch == '|') {
-            while (!ops.empty() && ops.top() != '(' && precedence(ch) <= precedence(ops.top())) {
-                post += ops.top();
-                ops.pop();
+            while (!operators.empty() && operators.top() != '(' && precedence(ch) <= precedence(operators.top())) {
+                post += operators.top();
+                operators.pop();
             }
-            ops.push(ch);
+            operators.push(ch);
+            infixNS += ch;
+            insi++;
         }
 
         else if (ch == ' ')
@@ -98,9 +103,9 @@ bool infixToPostfix(const string& infix, string& postfix) {
         else
             return false;
     }
-    while (!ops.empty()) {
-        post += ops.top();
-        ops.pop();
+    while (!operators.empty()) {
+        post += operators.top();
+        operators.pop();
     }
     postfix = post;
     return true;
@@ -223,13 +228,13 @@ int main() {
     bool answer;
     assert(evaluate("w| f", trues, falses, pf, answer) == 0  &&  pf == "wf|" &&  answer);
     //assert(evaluate("y|", trues, falses, pf, answer) == 1);
-    //assert(evaluate("n t", trues, falses, pf, answer) == 1);
-    //assert(evaluate("nt", trues, falses, pf, answer) == 1);
+    assert(evaluate("n t", trues, falses, pf, answer) == 1);
+    assert(evaluate("nt", trues, falses, pf, answer) == 1);
     //assert(evaluate("()", trues, falses, pf, answer) == 1);
-    //assert(evaluate("y(n|y)", trues, falses, pf, answer) == 1);
-    //assert(evaluate("t(&n)", trues, falses, pf, answer) == 1);
-    //assert(evaluate("(n&(t|7)", trues, falses, pf, answer) == 1);
-    //assert(evaluate("", trues, falses, pf, answer) == 1);
+    assert(evaluate("y(n|y)", trues, falses, pf, answer) == 1);
+    assert(evaluate("t(&n)", trues, falses, pf, answer) == 1);
+    assert(evaluate("(n&(t|7)", trues, falses, pf, answer) == 1);
+    assert(evaluate("", trues, falses, pf, answer) == 1);
     assert(evaluate("f  |  !f & (t&n) ", trues, falses, pf, answer) == 0
            &&  pf == "ff!tn&&|"  &&  !answer);
     assert(evaluate(" x  ", trues, falses, pf, answer) == 0  &&  pf == "x"  &&  !answer);
