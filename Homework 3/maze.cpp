@@ -4,47 +4,34 @@
 
 #include <iostream>
 #include <string>
-#include <stack>
 using namespace std;
 
-const char UPDATED = ' ';
-
-class Coord
-{
-public:
-    Coord(int rr, int cc) : m_r(rr), m_c(cc) {}
-    int r() const { return m_r; }
-    int c() const { return m_c; }
-private:
-    int m_r;
-    int m_c;
-};
+const char UPDATED = '#';
 
 bool pathExists(string maze[], int nRows, int nCols, int sr, int sc, int er, int ec) {
     if (sr == er && sc == ec)
         return true;
     maze[sr][sc] = UPDATED;
 
-    bool solnFound = false;
+    bool solved = false;
 
     // South
     if (maze[sr+1][sc] == '.') {
-        return pathExists(maze, nRows, nCols, sr + 1, sc, er, ec);
+        solved = pathExists(maze, nRows, nCols, sr + 1, sc, er, ec);
     }
     // West
-    if (maze[sr][sc-1] == '.') {
-        return pathExists(maze, nRows, nCols, sr + 1, sc, er, ec);
+    if (!solved && maze[sr][sc-1] == '.') {
+        solved = pathExists(maze, nRows, nCols, sr, sc - 1, er, ec);
     }
     //North
-    if (maze[sr-1][sc] == '.') {
-        solnFound = pathExists(maze, nRows, nCols, sr + 1, sc, er, ec);
+    if (!solved && maze[sr-1][sc] == '.') {
+        solved = pathExists(maze, nRows, nCols, sr - 1, sc, er, ec);
     }
     // East
-    if (maze[sr][sc-1] == '.') {
-        solnFound = pathExists(maze, nRows, nCols, sr + 1, sc, er, ec);
+    if (!solved && maze[sr][sc+1] == '.') {
+        solved = pathExists(maze, nRows, nCols, sr, sc +1, er, ec);
     }
-
-    return solnFound;
+    return solved;
 }
 
 int main() {
@@ -61,13 +48,9 @@ int main() {
             "XXXXXXXXXX"
     };
 
-    if (pathExists(maze, 10,10, 3,5, 8,8))
+    if (pathExists(maze, 10,10, 1,1, 8,8))
         cout << "Solvable!" << endl;
     else
         cout << "Out of luck!" << endl;
-    cout << endl;
-    for (int i = 0; i < 10; i++) {
-        cout << maze[i] << endl;
-    }
     return 0;
 }

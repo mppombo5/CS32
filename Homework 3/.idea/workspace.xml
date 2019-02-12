@@ -17,10 +17,7 @@
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Homework 1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Homework 1/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Homework 2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Homework 2/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landmark.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/landmark.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linear.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/linear.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maze.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/maze.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 1/ClubZombie/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Project 1/ClubZombie/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 1/ClubZombie/History.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Project 1/ClubZombie/History.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Project 2/.idea/workspace.xml" afterDir="false" />
@@ -47,7 +44,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/linear.cpp">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="363">
@@ -59,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/maze.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="36" column="5" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
+            <state relative-caret-position="693">
+              <caret line="50" column="35" selection-start-line="50" selection-start-column="35" selection-end-line="50" selection-end-column="35" />
               <folding>
                 <element signature="e#50#69#0" expanded="true" />
               </folding>
@@ -81,8 +78,8 @@
       <list>
         <option value="$PROJECT_DIR$/landmark.cpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/maze.cpp" />
         <option value="$PROJECT_DIR$/linear.cpp" />
+        <option value="$PROJECT_DIR$/maze.cpp" />
       </list>
     </option>
   </component>
@@ -130,7 +127,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Linear">
+  <component name="RunManager" selected="Application.Maze">
     <configuration name="Landmark" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Homework_3" TARGET_NAME="Landmark" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Homework_3" RUN_TARGET_NAME="Landmark">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -170,12 +167,12 @@
       <workItem from="1549695997290" duration="3726000" />
       <workItem from="1549768035368" duration="1810000" />
       <workItem from="1549859711125" duration="6570000" />
-      <workItem from="1549945560501" duration="1092000" />
+      <workItem from="1549945560501" duration="2149000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23885000" />
+    <option name="totallyTimeSpent" value="24942000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -227,22 +224,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/maze.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="36" column="5" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
-          <folding>
-            <element signature="e#50#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/linear.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="363">
           <caret line="115" column="21" selection-start-line="115" selection-start-column="21" selection-end-line="115" selection-end-column="21" />
           <folding>
             <element signature="e#203#222#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/maze.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="693">
+          <caret line="50" column="35" selection-start-line="50" selection-start-column="35" selection-end-line="50" selection-end-column="35" />
+          <folding>
+            <element signature="e#50#69#0" expanded="true" />
           </folding>
         </state>
       </provider>
