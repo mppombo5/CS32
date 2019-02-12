@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(Landmark landmark.cpp)
 add_executable(Linear linear.cpp)
+add_executable(Maze maze.cpp)

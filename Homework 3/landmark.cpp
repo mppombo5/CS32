@@ -32,7 +32,7 @@ private:
 
 class Hotel: public Landmark {
 public:
-    Hotel(string nm): Landmark(nm){}
+    Hotel(string nm): Landmark(nm) {}
 
     virtual ~Hotel() {
         cout << "Destroying the hotel " << name() << ".\n";
@@ -52,7 +52,7 @@ public:
     virtual ~Restaurant() {
         cout << "Destroying the restaurant " << name() << ".\n";
     }
-
+    
     virtual string icon() const {
         if (m_size < 40)
             return "small knife/fork";
