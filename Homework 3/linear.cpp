@@ -121,8 +121,12 @@ bool includes(const double a1[], int n1, const double a2[], int n2)
 /////////////////////////////////////////////////
 int main() {
     const double arrAnyTrue[10] {
-        1, 2, 3, 4, 5, 35, 7, 8, 9, 10
-    //  0  1  2  3  4  5   6  7  8  9
+            1, 2, 3, 4, 5, 35, 7, 8, 9, 10
+            //  0  1  2  3  4  5   6  7  8  9
+    };
+    const double arrAnyTrue1[11] {
+            1, 2, 3, 4, 5, 35, 7, 8, 9, 10, 11
+        //  0  1  2  3  4  5   6  7  8  9
     };
 
     const double arrCountTrue[10] {
