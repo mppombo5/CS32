@@ -19,7 +19,19 @@ using namespace std;
 //	50 40 30			3
 int countIncludes(const double a1[], int n1, const double a2[], int n2)
 {
-    return -999;  // This is incorrect.
+    if (n2 <= 0)
+        return 1;
+    if (n1 <= 1) {
+        if (*a1 == *a2 && n2 <= 1)
+            return 1;
+        return 0;
+    }
+
+    int rest = 0;
+    if (*a1 == *a2) {
+        rest = countIncludes(a1+1, n1-1, a2+1, n2-1);
+    }
+    return countIncludes(a1+1, n1-1, a2, n2) + rest;
 }
 
 // Exchange two doubles
@@ -181,11 +193,26 @@ int main() {
         assert(nums6[i] <= nums6[i-1]);
     }
 
-    cout << "====" << endl;
-    // just a test
-    double d = 3.67;
-    d++;
-    cout << d << endl;
+    double cI1[7] {
+            10, 50, 40, 20, 50, 40, 30
+    };
+    double cI2[3] {
+            10, 20, 40
+    };
+    double cI3[3] {
+            10, 40, 30
+    };
+    double cI4[3] {
+            20, 10, 40
+    };
+    double cI5[3] {
+            50, 40, 30
+    };
+
+    assert(countIncludes(cI1, 7, cI2, 3) == 1);
+    assert(countIncludes(cI1, 7, cI3, 3) == 2);
+    assert(countIncludes(cI1, 7, cI4, 3) == 0);
+    assert(countIncludes(cI1, 7, cI5, 3) == 3);
 
     cout << "All tests passed!" << endl;
 }

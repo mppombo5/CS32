@@ -18,7 +18,6 @@
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Homework 1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Homework 1/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Homework 2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Homework 2/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linear.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/linear.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tree.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/tree.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 1/ClubZombie/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Project 1/ClubZombie/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 1/ClubZombie/History.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Project 1/ClubZombie/History.h" afterDir="false" />
@@ -58,10 +57,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/linear.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1081">
+            <state relative-caret-position="-428">
               <caret line="115" column="64" selection-start-line="115" selection-start-column="64" selection-end-line="115" selection-end-column="64" />
               <folding>
                 <element signature="e#203#222#0" expanded="true" />
@@ -79,11 +78,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tree.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1025">
-              <caret line="95" column="26" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
+            <state relative-caret-position="299">
+              <caret line="214" column="47" selection-start-line="214" selection-start-column="47" selection-end-line="214" selection-end-column="47" />
               <folding>
                 <element signature="e#50#69#0" expanded="true" />
                 <element signature="e#3652#3667#0" expanded="true" />
@@ -108,8 +107,8 @@
         <option value="$PROJECT_DIR$/landmark.cpp" />
         <option value="$PROJECT_DIR$/maze.cpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/tree.cpp" />
         <option value="$PROJECT_DIR$/linear.cpp" />
+        <option value="$PROJECT_DIR$/tree.cpp" />
       </list>
     </option>
   </component>
@@ -204,12 +203,12 @@
       <workItem from="1549768035368" duration="1810000" />
       <workItem from="1549859711125" duration="6570000" />
       <workItem from="1549945560501" duration="8547000" />
-      <workItem from="1550013485494" duration="12323000" />
+      <workItem from="1550013485494" duration="13601000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="43663000" />
+    <option name="totallyTimeSpent" value="44941000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -353,23 +352,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tree.cpp">
+    <entry file="file://$PROJECT_DIR$/linear.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1025">
-          <caret line="95" column="26" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
+        <state relative-caret-position="-428">
+          <caret line="115" column="64" selection-start-line="115" selection-start-column="64" selection-end-line="115" selection-end-column="64" />
           <folding>
-            <element signature="e#50#69#0" expanded="true" />
-            <element signature="e#3652#3667#0" expanded="true" />
+            <element signature="e#203#222#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/linear.cpp">
+    <entry file="file://$PROJECT_DIR$/tree.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1081">
-          <caret line="115" column="64" selection-start-line="115" selection-start-column="64" selection-end-line="115" selection-end-column="64" />
+        <state relative-caret-position="299">
+          <caret line="214" column="47" selection-start-line="214" selection-start-column="47" selection-end-line="214" selection-end-column="47" />
           <folding>
-            <element signature="e#203#222#0" expanded="true" />
+            <element signature="e#50#69#0" expanded="true" />
+            <element signature="e#3652#3667#0" expanded="true" />
           </folding>
         </state>
       </provider>
