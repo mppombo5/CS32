@@ -112,8 +112,21 @@ int positionOfMin(const double a[], int n)
 //    10 20 20
 bool includes(const double a1[], int n1, const double a2[], int n2)
 {
-    if (n1 <= 0 || n2 <= 0)
+    // THE ORDER MATTERS
+    // it still has to return true if a1 runs out as a2 runs out
+    if (n2 <= 0)
+        return true;
+    if (n1 <= 0) {
         return false;
+    }
+
+    if (a1[0] == a2[0]) {
+        // this works because if n2 has run out, then that's good
+        // if n1 has run out, on the other hand, then it didn't match and that's no bueno
+        return includes(a1 + 1, n1 - 1, a2 + 1, n2 - 1);
+    }
+
+    return includes(a1 + 1, n1 - 1, a2, n2);
 }
 
 /////////////////////////////////////////////////
@@ -136,6 +149,22 @@ int main() {
 
     const double arrPosMin[10] {
         10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+    };
+
+    const double arrIncludes1[7] {
+            10, 50, 40, 20, 50, 40, 30
+    };
+    const double arrIncludes2[3] {
+        50, 20, 30
+    };
+    const double arrIncludes3[3] {
+        50, 40, 40
+    };
+    const double arrIncludes4[3] {
+        50, 30, 20
+    };
+    const double arrIncludes5[3] {
+        10, 20, 20
     };
 
     // anyTrue tests
@@ -169,6 +198,12 @@ int main() {
     assert(positionOfMin(arrPosMin+3, 7) == 6);
     assert(positionOfMin(arrCountTrue+4, 6) == 2);
     assert(positionOfMin(arrCountTrue+5, 5) == 1);
+
+    // includes tests
+    assert( includes(arrIncludes1, 7, arrIncludes2, 3));
+    assert( includes(arrIncludes1, 7, arrIncludes3, 3));
+    assert(!includes(arrIncludes1, 7, arrIncludes4, 3));
+    assert(!includes(arrIncludes1, 7, arrIncludes5, 3));
 
     cout << "All tests passed!" << endl;
 
