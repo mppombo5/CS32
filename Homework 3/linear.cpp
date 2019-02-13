@@ -2,21 +2,7 @@
 // Created by Matthew Pombo on 2019-02-06.
 //
 
-//////////////////////////////////////////////////
-/// REMEMBER TO DELETE THESE BEFORE TURNING IN ///
-//////////////////////////////////////////////////
-#include <iostream>
-#include <cassert>
-using namespace std;
-
 bool somePredicate(double x);
-
-///////////////////////
-/// DELETE THIS TOO ///
-///////////////////////
-bool somePredicate(double x) {
-    return x > 30;
-}
 
 // HELPFUL TIP: make a variable that represents the recursive function of the smaller subset
 // then compare it
@@ -127,85 +113,4 @@ bool includes(const double a1[], int n1, const double a2[], int n2)
     }
 
     return includes(a1 + 1, n1 - 1, a2, n2);
-}
-
-/////////////////////////////////////////////////
-/// REMEMBER TO DELETE THIS BEFORE TURNING IN ///
-/////////////////////////////////////////////////
-int main() {
-    const double arrAnyTrue[10] {
-            1, 2, 3, 4, 5, 35, 7, 8, 9, 10
-            //  0  1  2  3  4  5   6  7  8  9
-    };
-    const double arrAnyTrue1[11] {
-            1, 2, 3, 4, 5, 35, 7, 8, 9, 10, 11
-        //  0  1  2  3  4  5   6  7  8  9
-    };
-
-    const double arrCountTrue[10] {
-        1, 2, 3, 45, 55, 65, 7, 8, 95, 10
-    //  0  1  2  3   4   5   6  7  8   9
-    };
-
-    const double arrPosMin[10] {
-        10, 9, 8, 7, 6, 5, 4, 3, 2, 1
-    };
-
-    const double arrIncludes1[7] {
-            10, 50, 40, 20, 50, 40, 30
-    };
-    const double arrIncludes2[3] {
-        50, 20, 30
-    };
-    const double arrIncludes3[3] {
-        50, 40, 40
-    };
-    const double arrIncludes4[3] {
-        50, 30, 20
-    };
-    const double arrIncludes5[3] {
-        10, 20, 20
-    };
-
-    // anyTrue tests
-    assert( anyTrue(arrAnyTrue, 10));
-    assert( anyTrue(arrAnyTrue+5, 5));
-    assert(!anyTrue(arrAnyTrue+6, 4));
-    assert(!anyTrue(arrAnyTrue, 5));
-    assert(!anyTrue(arrAnyTrue, 0));
-
-    // countTrue tests
-    assert(countTrue(arrCountTrue, 10) == 4);
-    assert(countTrue(arrCountTrue+4, 6) == 3);
-    assert(countTrue(arrAnyTrue, 10) == 1);
-    assert(countTrue(arrCountTrue+5, 5) == 2);
-    assert(countTrue(arrAnyTrue+6, 4) == 0);
-
-    // firstTrue tests
-    assert(firstTrue(arrAnyTrue, 10) == 5);
-    assert(firstTrue(arrAnyTrue+5, 5) == 0);
-    assert(firstTrue(arrCountTrue+3, 7) == 0);
-    assert(firstTrue(arrCountTrue+6, 4) == 2);
-    assert(firstTrue(arrAnyTrue, 0) == -1);
-    // where it starts getting dicey
-    assert(firstTrue(arrAnyTrue+6, 4) == -1);
-
-    // positionOfMin tests
-    assert(positionOfMin(arrAnyTrue, 10) == 0);
-    assert(positionOfMin(arrCountTrue, 10) == 0);
-    assert(positionOfMin(arrAnyTrue+5, 5) == 1);
-    assert(positionOfMin(arrPosMin, 10) == 9);
-    assert(positionOfMin(arrPosMin+3, 7) == 6);
-    assert(positionOfMin(arrCountTrue+4, 6) == 2);
-    assert(positionOfMin(arrCountTrue+5, 5) == 1);
-
-    // includes tests
-    assert( includes(arrIncludes1, 7, arrIncludes2, 3));
-    assert( includes(arrIncludes1, 7, arrIncludes3, 3));
-    assert(!includes(arrIncludes1, 7, arrIncludes4, 3));
-    assert(!includes(arrIncludes1, 7, arrIncludes5, 3));
-
-    cout << "All tests passed!" << endl;
-
-    return 0;
 }

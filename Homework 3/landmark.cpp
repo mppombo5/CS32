@@ -2,10 +2,6 @@
 #include <string>
 using namespace std;
 
-//////////////////////////
-/// My implementations ///
-//////////////////////////
-
 class Landmark {
 public:
     Landmark(string nm) {
@@ -80,10 +76,6 @@ public:
     }
 };
 
-///////////////////////
-/// To test against ///
-///////////////////////
-
 // don't change
 void display(const Landmark* lm)
 {
@@ -112,18 +104,3 @@ int main()
     for (int k = 0; k < 4; k++)
         delete landmarks[k];
 }
-
-/*
-Output produced:
-
-Here are the landmarks.
-Display a yellow bed icon for Westwood Rest Good.
-Display a yellow small knife/fork icon for Bruin Bite.
-Display a yellow large knife/fork icon for La Morsure de l'Ours.
-Display a blue H icon for UCLA Medical Center.
-Cleaning up.
-Destroying the hotel Westwood Rest Good.
-Destroying the restaurant Bruin Bite.
-Destroying the restaurant La Morsure de l'Ours.
-Destroying the hospital UCLA Medical Center.
- */
