@@ -1,6 +1,4 @@
 #include "GL/freeglut.h"
-#include "GL/freeglut_ext.h"
-#include "GL/freeglut_std.h"
 #include "GameController.h"
 #include "GameWorld.h"
 #include "GameConstants.h"
