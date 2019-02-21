@@ -10,17 +10,21 @@
 class Actor;
 class Penelope;
 
-class StudentWorld : public GameWorld
+class StudentWorld: public GameWorld
 {
 public:
     // Constructor/Destructor
     StudentWorld(std::string assetPath);
+    ~StudentWorld();
 
     // Mutators
     virtual int init();
     virtual int move();
     virtual void cleanUp();
-    void levelExample();
+
+    // Accessors
+    // Why does this have two const declarations? You tell me.
+    const std::list<Actor*>& actorList() const;
 
 private:
     // I chose a list because it automatically removes any deleted objects instead of having to step over deleted ones.

@@ -20,6 +20,10 @@ StudentWorld::StudentWorld(string assetPath)
 {
 }
 
+StudentWorld::~StudentWorld() {
+    cleanUp();
+}
+
 int StudentWorld::init()
 {
     Level level(assetPath());
@@ -98,6 +102,7 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
+    m_player->doSomething();
     list<Actor*>::iterator it;
     // have each actor do something and check if the player died
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
@@ -119,13 +124,6 @@ int StudentWorld::move()
         // otherwise, just keep traversing
         it++;
     }
-    for (it = m_actors.begin(); it != m_actors.end(); it++) {
-        if ((*it)->isDead()) {
-            delete *it;
-            m_actors.erase(it);
-
-        }
-    }
 
     // TODO: update game status line
 
@@ -134,48 +132,26 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
-    return;
-}
-
-void StudentWorld::levelExample() {
-    Level lev(assetPath());
-
-    string levelFile = "level01.txt";
-    Level::LoadResult result = lev.loadLevel(levelFile);
-    if (result == Level::load_fail_file_not_found)
-        cerr << "Cannot find level01.txt data file" << endl;
-    else if (result == Level::load_fail_bad_format)
-        cerr << "Your level was improperly formatted" << endl;
-    else if (result == Level::load_success) {
-        cerr << "Successfully loaded level" << endl;
-
-        Level::MazeEntry ge = lev.getContentsOf(5, 10); // level_x = 5, level_y = 10
-        switch (ge) {                                   // so x=80 and y=160
-            case Level::empty:
-                cout << "Location 80, 160 is empty" << endl;
-                break;
-            case Level::smart_zombie:
-                cout << "Location 80,160 starts with a smart zombie" << endl;
-                break;
-            case Level::dumb_zombie:
-                cout << "Location 80,160 starts with a dumb zombie" << endl;
-                break;
-            case Level::player:
-                cout << "Location 80,160 is where Penelope starts" << endl;
-                break;
-            case Level::exit:
-                cout << "Location 80,160 is where an exit is" << endl;
-                break;
-            case Level::wall:
-                cout << "Location 80,160 holds a Wall" << endl;
-                break;
-            case Level::pit:
-                cout << "Location 80,160 has a pit in the ground" << endl;
-                break;
-            // etc...
-        }
+    list<Actor*>::iterator it;
+    while (it != m_actors.end()) {
+        delete *it;
+        it = m_actors.erase(it);
     }
+
+    delete m_player;
 }
+
+const std::list<Actor*>& StudentWorld::actorList() const {
+    return m_actors;
+}
+
+
+
+
+
+
+
+
 
 
 

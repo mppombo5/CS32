@@ -2,6 +2,7 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
+#include <list>
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
@@ -15,8 +16,10 @@ public:
 
     // Accessors
     bool isDead() const;
-    bool overlaps(const Actor& other);
-    StudentWorld* getWorld();
+    bool overlaps(const Actor& other) const;
+    virtual bool blocked(double destX, double destY, const std::list<Actor*>& actors) const;
+    StudentWorld* getWorld() const;
+
 
     // Mutators
     // Each actor can specify whether or not they can be killed (true/false)
@@ -27,6 +30,11 @@ public:
     virtual void doSomething() = 0;
 
 protected:
+    // Member functions
+    bool wouldBlock(double destX, double destY, const std::list<Actor*>& actors) const;
+
+    // Data members
+
     // setDead() will be different for sentient and environmental actors, but I still need a way to set
     // m_dead to false
     void setm_dead();
@@ -47,11 +55,11 @@ public:
     // Accessors
     bool isInfected() const;
     int infectedCount() const;
-    bool movesOnto(const Actor& other) const;
+    virtual bool blocked(double destX, double destY, const std::list<Actor*>& actors) const;
 
     // Mutators
-    virtual bool infect() = 0;
-    void increaseInfectedCount();
+    virtual void infect() = 0;
+    void increaseInfection();
     virtual bool setDead();
 
 protected:
@@ -60,6 +68,25 @@ protected:
 private:
     bool m_infected;
     int m_infectionCount;
+};
+
+
+
+class Penelope: public SentientActor {
+public:
+    // Constructor/Destructor
+    Penelope(int startX, int startY, StudentWorld* world);
+
+    // Accessors
+
+    //Mutators
+    virtual void doSomething();
+    virtual void infect();
+
+private:
+    int m_vaccines;
+    int m_landmines;
+    int m_flameCharges;
 };
 
 
@@ -79,25 +106,6 @@ private:
 
 
 
-class Penelope: public SentientActor {
-public:
-    // Constructor/Destructor
-    Penelope(int startX, int startY, StudentWorld* world);
-
-    // Accessors
-
-    //Mutators
-    virtual void doSomething();
-    virtual bool infect();
-
-private:
-    int m_vaccines;
-    int m_landmines;
-    int m_flameCharges;
-};
-
-
-
 class Wall: public EnvironmentalActor {
 public:
     // Constructor/Destructor
@@ -107,7 +115,6 @@ public:
 
     // Mutators
     virtual void doSomething();
-    virtual bool infect();
     virtual bool setDead();
 private:
 
