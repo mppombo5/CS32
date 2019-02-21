@@ -18,7 +18,7 @@ using namespace std;
 ////////////////////////////
 
 Actor::Actor(int imageID, int startX, int startY, Direction startDir, int depth, StudentWorld* world)
-: GraphObject(imageID, startX, startY, startDir, depth) {
+        : GraphObject(imageID, startX, startY, startDir, depth) {
     m_world = world;
     m_dead = false;
 }
@@ -64,9 +64,9 @@ bool Actor::wouldBlock(double destX, double destY, const list<Actor*>& actors) c
     list<Actor*>::const_iterator it;
     for (it = actors.begin(); it != actors.end(); it++) {
         if (   (((*it)->getX() <= destX                    && destX                    <= (*it)->getX() + SPRITE_WIDTH-1)
-            ||  ((*it)->getX() <= destX + SPRITE_WIDTH-1   && destX + SPRITE_WIDTH-1   <= (*it)->getX() + SPRITE_WIDTH-1))
-            && (((*it)->getY() <= destY                    && destY                    <= (*it)->getY() + SPRITE_HEIGHT-1)
-            ||  ((*it)->getY() <= destY + SPRITE_HEIGHT-1  && destY + SPRITE_HEIGHT-1  <= (*it)->getY() + SPRITE_HEIGHT-1)))
+                ||  ((*it)->getX() <= destX + SPRITE_WIDTH-1   && destX + SPRITE_WIDTH-1   <= (*it)->getX() + SPRITE_WIDTH-1))
+               && (((*it)->getY() <= destY                    && destY                    <= (*it)->getY() + SPRITE_HEIGHT-1)
+                   ||  ((*it)->getY() <= destY + SPRITE_HEIGHT-1  && destY + SPRITE_HEIGHT-1  <= (*it)->getY() + SPRITE_HEIGHT-1)))
             return true;
     }
     return false;
@@ -81,7 +81,7 @@ void Actor::setm_dead() {
 ////////////////////////////////////
 
 SentientActor::SentientActor(int imageID, int startX, int startY, Direction startDir, int depth, StudentWorld* world)
-: Actor(imageID, startX, startY, startDir, depth, world) {
+        : Actor(imageID, startX, startY, startDir, depth, world) {
     m_infected = false;
     m_infectionCount = 0;
 }
@@ -119,7 +119,7 @@ void SentientActor::setm_infected() {
 ///////////////////////////////
 
 Penelope::Penelope(int startX, int startY, StudentWorld* world)
-: SentientActor(IID_PLAYER, startX, startY, right, 0, world) {
+        : SentientActor(IID_PLAYER, startX, startY, right, 0, world) {
     m_flameCharges = 0;
     m_landmines = 0;
     m_vaccines = 0;
@@ -187,7 +187,7 @@ void Penelope::infect() {
 /////////////////////////////////////////
 
 EnvironmentalActor::EnvironmentalActor(int imageID, int startX, int startY, Direction startDir, int depth, StudentWorld* world)
-: Actor(imageID, startX, startY, startDir, depth, world) {
+        : Actor(imageID, startX, startY, startDir, depth, world) {
 
 }
 
@@ -196,7 +196,7 @@ EnvironmentalActor::EnvironmentalActor(int imageID, int startX, int startY, Dire
 ///////////////////////////
 
 Wall::Wall(int startX, int startY, StudentWorld* world)
-: EnvironmentalActor(IID_WALL, startX, startY, right, 0, world) {}
+        : EnvironmentalActor(IID_WALL, startX, startY, right, 0, world) {}
 
 void Wall::doSomething() {}
 

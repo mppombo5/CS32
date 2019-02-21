@@ -132,7 +132,7 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
-    list<Actor*>::iterator it;
+    list<Actor*>::iterator it = m_actors.begin();
     while (it != m_actors.end()) {
         delete *it;
         it = m_actors.erase(it);
