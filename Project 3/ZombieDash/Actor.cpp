@@ -11,7 +11,31 @@ using namespace std;
 /// need to do the same thing ///////////
 /////////////////////////////////////////
 
-// this might end up being empty lmao
+// checks whether num is contained in between lower and upper inclusive
+bool containedIn(double num, double lower, double upper) {
+    return (lower <= num && num <= upper);
+}
+
+bool intersectsBoundingBox(double destX, double destY, const Actor* actor) {
+    // lower corners: destX,destY; otherX,otherY
+
+    // checks:
+    // otherX <= destX                 <= otherX+SPRITE_WIDTH-1  X
+    // otherX <= destX+SPRITE_WIDTH-1 <= otherX+SPRITE_WIDTH-1   X
+    // and
+    // otherY <= destY                 <= otherY+SPRITE_HEIGHT-1 X
+    // otherY <= destY+SPRITE_HEIGHT-1 <= otherY+SPRITE_HEIGHT-1 X
+
+    double otherX     = actor->getX();
+    double otherXEdge = actor->getX() + SPRITE_WIDTH-1;
+    double otherY     = actor->getY();
+    double otherYEdge = actor->getY() + SPRITE_HEIGHT-1;
+
+    if ( ( containedIn(destX, otherX, otherXEdge) || containedIn(destX + SPRITE_WIDTH-1, otherX, otherXEdge))
+       && (containedIn(destY, otherY, otherYEdge) || containedIn(destY + SPRITE_HEIGHT-1, otherY, otherYEdge)))
+        return true;
+    return false;
+}
 
 ////////////////////////////
 /// Actor Implementation ///
@@ -46,11 +70,11 @@ bool Actor::overlaps(const Actor& other) const {
 }
 
 // check if the destination of an actor would block the
-bool Actor::blocked(double destX, double destY, const std::list<Actor*>& actors) const {
+bool Actor::blockedOG(double destX, double destY, const std::list<Actor *> &actors) const {
     return false;
 }
 
-bool Actor::wouldBlock(double destX, double destY, const list<Actor*>& actors) const {
+/*bool Actor::wouldBlock(double destX, double destY, const list<Actor*>& actors) const {
     // lower corners: destX,destY; otherX,otherY
 
     // checks:
@@ -69,6 +93,24 @@ bool Actor::wouldBlock(double destX, double destY, const list<Actor*>& actors) c
                    ||  ((*it)->getY() <= destY + SPRITE_HEIGHT-1  && destY + SPRITE_HEIGHT-1  <= (*it)->getY() + SPRITE_HEIGHT-1)))
             return true;
     }
+    return false;
+}*/
+
+bool Actor::blocked(double destX, double destY, const StudentWorld* world) const {
+    list<Actor*> actorList = m_world->actorList();
+    list<Actor*>::const_iterator it;
+
+    for (it = actorList.begin(); it != actorList.end(); it++) {
+        // check if each actor **would block** this one
+        if ((*it)->wouldBlock(destX, destY, this)) {
+            return true;
+        }
+    }
+    // nothing returned true, so it's false
+    return false;
+}
+
+bool Actor::wouldBlock(double destX, double destY, const Actor* actor) const {
     return false;
 }
 
@@ -106,8 +148,14 @@ bool SentientActor::setDead() {
     return false;
 }
 
-bool SentientActor::blocked(double destX, double destY, const std::list<Actor*>& actors) const {
-    return wouldBlock(destX, destY, getWorld()->actorList());
+bool SentientActor::blockedOG(double destX, double destY, const std::list<Actor *> &actors) const {
+    //return wouldBlock(destX, destY, getWorld()->actorList());
+    return false;
+}
+
+bool SentientActor::wouldBlock(double destX, double destY, const Actor* actor) const {
+    // IMPORTANT: make the actor parameter this, because this is the thing you're checking destX and destY against
+    return intersectsBoundingBox(destX, destY, this);
 }
 
 void SentientActor::setm_infected() {
@@ -143,7 +191,7 @@ void Penelope::doSomething() {
                 setDirection(right);
                 double destX = getX() + 4;
                 double destY = getY();
-                if (!blocked(destX, destY, getWorld()->actorList()))
+                if (!blocked(destX, destY, getWorld()))
                     moveTo(destX, destY);
                 break;
             }
@@ -151,7 +199,7 @@ void Penelope::doSomething() {
                 setDirection(down);
                 double destX = getX();
                 double destY = getY() - 4;
-                if (!blocked(destX, destY, getWorld()->actorList()))
+                if (!blocked(destX, destY, getWorld()))
                     moveTo(destX, destY);
                 break;
             }
@@ -159,7 +207,7 @@ void Penelope::doSomething() {
                 setDirection(left);
                 double destX = getX() - 4;
                 double destY = getY();
-                if (!blocked(destX, destY, getWorld()->actorList()))
+                if (!blocked(destX, destY, getWorld()))
                     moveTo(destX, destY);
                 break;
             }
@@ -167,7 +215,7 @@ void Penelope::doSomething() {
                 setDirection(up);
                 double destX = getX();
                 double destY = getY() + 4;
-                if (!blocked(destX, destY, getWorld()->actorList()))
+                if (!blocked(destX, destY, getWorld()))
                     moveTo(destX, destY);
                 break;
             }
@@ -202,6 +250,10 @@ void Wall::doSomething() {}
 
 bool Wall::setDead() {
     return false;
+}
+
+bool Wall::wouldBlock(double destX, double destY, const Actor *actor) const {
+    return (intersectsBoundingBox(destX, destY, this));
 }
 
 

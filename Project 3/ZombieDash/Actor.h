@@ -17,7 +17,10 @@ public:
     // Accessors
     bool isDead() const;
     bool overlaps(const Actor& other) const;
-    virtual bool blocked(double destX, double destY, const std::list<Actor*>& actors) const;
+    virtual bool blockedOG(double destX, double destY, const std::list<Actor *> &actors) const;
+
+    bool blocked(double destX, double destY, const StudentWorld* world) const;
+
     StudentWorld* getWorld() const;
 
 
@@ -31,7 +34,7 @@ public:
 
 protected:
     // Member functions
-    bool wouldBlock(double destX, double destY, const std::list<Actor*>& actors) const;
+    virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
 
     // Data members
 
@@ -55,7 +58,7 @@ public:
     // Accessors
     bool isInfected() const;
     int infectedCount() const;
-    virtual bool blocked(double destX, double destY, const std::list<Actor*>& actors) const;
+    virtual bool blockedOG(double destX, double destY, const std::list<Actor *> &actors) const;
 
     // Mutators
     virtual void infect() = 0;
@@ -63,6 +66,10 @@ public:
     virtual bool setDead();
 
 protected:
+    // Accessors
+    virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
+
+    // Mutators
     void setm_infected();
 
 private:
@@ -100,6 +107,12 @@ public:
     // Accessors
 
     // Mutators
+
+protected:
+    // Accessors
+
+    // Mutators
+
 private:
 
 };
@@ -116,8 +129,43 @@ public:
     // Mutators
     virtual void doSomething();
     virtual bool setDead();
+
+protected:
+    // Accessors
+    virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
+
+    // Mutators
+
 private:
 
 };
 
 #endif // ACTOR_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
