@@ -12,34 +12,30 @@ class StudentWorld;
 class Actor: public GraphObject {
 public:
     // Constructor
-    Actor(int imageID, int startX, int startY, Direction startDir, int depth, StudentWorld* world);
+    Actor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
     bool isDead() const;
     bool overlaps(const Actor& other) const;
-    virtual bool blockedOG(double destX, double destY, const std::list<Actor *> &actors) const;
-
-    bool blocked(double destX, double destY, const StudentWorld* world) const;
-
+    bool blocked(double destX, double destY) const;
     StudentWorld* getWorld() const;
 
 
     // Mutators
     // Each actor can specify whether or not they can be killed (true/false)
     virtual bool setDead() = 0;
+    void safeMoveTo(double destX, double destY);
 
     // doSomething() to be called by move() function.
     // return false if the actor died
     virtual void doSomething() = 0;
 
 protected:
-    // Member functions
+    // Accessors
     virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
 
-    // Data members
-
-    // setDead() will be different for sentient and environmental actors, but I still need a way to set
-    // m_dead to false
+    // Mutators
+    // setDead() will be different for sentient and environmental actors, but I still need a way to set m_dead to false
     void setm_dead();
 
 private:
@@ -53,17 +49,16 @@ private:
 class SentientActor: public Actor {
 public:
     // Constructor/Destructor
-    SentientActor(int imageID, int startX, int startY, Direction startDir, int depth, StudentWorld* world);
+    SentientActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
     bool isInfected() const;
-    int infectedCount() const;
-    virtual bool blockedOG(double destX, double destY, const std::list<Actor *> &actors) const;
+    int infectionCount() const;
 
     // Mutators
     virtual void infect() = 0;
-    void increaseInfection();
     virtual bool setDead();
+    void increaseInfection();
 
 protected:
     // Accessors
@@ -82,9 +77,12 @@ private:
 class Penelope: public SentientActor {
 public:
     // Constructor/Destructor
-    Penelope(int startX, int startY, StudentWorld* world);
+    Penelope(double startX, double startY, StudentWorld* world);
 
     // Accessors
+    int getVaccines() const;
+    int getLandmines() const;
+    int getFlames() const;
 
     //Mutators
     virtual void doSomething();
@@ -93,7 +91,7 @@ public:
 private:
     int m_vaccines;
     int m_landmines;
-    int m_flameCharges;
+    int m_flames;
 };
 
 
@@ -102,7 +100,7 @@ private:
 class EnvironmentalActor: public Actor {
 public:
     // Constructor/Destructor
-    EnvironmentalActor(int imageID, int startX, int startY, Direction startDir, int depth, StudentWorld* world);
+    EnvironmentalActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
 
@@ -122,7 +120,7 @@ private:
 class Wall: public EnvironmentalActor {
 public:
     // Constructor/Destructor
-    Wall(int startX, int startY, StudentWorld* world);
+    Wall(double startX, double startY, StudentWorld* world);
 
     // Accessors
 
@@ -133,6 +131,27 @@ public:
 protected:
     // Accessors
     virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
+
+    // Mutators
+
+private:
+
+};
+
+
+
+class Exit: public EnvironmentalActor {
+public:
+    // Constructor/Destructor
+    Exit(double startX, double startY, StudentWorld* world);
+
+    // Accessors
+
+    // Mutators
+    virtual void doSomething();
+
+protected:
+    // Accessors
 
     // Mutators
 

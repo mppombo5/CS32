@@ -106,7 +106,8 @@ int StudentWorld::move()
     list<Actor*>::iterator it;
     // have each actor do something and check if the player died
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
-        (*it)->doSomething();
+        if (! (*it)->isDead())
+            (*it)->doSomething();
         if (m_player->isDead())
             return GWSTATUS_PLAYER_DIED;
         // TODO: check if the player has beaten the level (no cits left, Penelope has reached the exit)
@@ -125,7 +126,18 @@ int StudentWorld::move()
         it++;
     }
 
-    // TODO: update game status line
+    // update the game status line
+    ostringstream oss;
+    oss << "Score: ";
+    oss.fill('0');
+    oss << setw(6) << getScore() << setw(0) << "  Level: ";
+    oss.fill(' ');
+    oss << setw(2) << getLevel() << setw(0) << "  Lives: " << getLives() << "  Vacc: "
+    << setw(2) << m_player->getVaccines() << setw(0) << "  Flames: " << setw(2) << m_player->getFlames()
+    << setw(0) << "  Mines: " << setw(2) << m_player->getLandmines() << setw(0) << "  Infected: " << m_player->infectionCount();
+    setGameStatText(oss.str());
+
+
 
     return GWSTATUS_CONTINUE_GAME;
 }
