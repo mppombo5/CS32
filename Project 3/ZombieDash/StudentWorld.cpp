@@ -52,6 +52,9 @@ int StudentWorld::init()
         // nested for loops to check for each spot on the grid
         for (int i = 0; i < LEVEL_WIDTH; i++) {
             for (int k = 0; k < LEVEL_HEIGHT; k++) {
+                double startX = i * SPRITE_WIDTH;
+                double startY = k * SPRITE_HEIGHT;
+
                 const Level::MazeEntry& objectAtCoords = level.getContentsOf(i, k);
                 switch (objectAtCoords) {
                     // TODO: add each actor to m_actors according to its space (constructor coordinates)
@@ -66,11 +69,11 @@ int StudentWorld::init()
                         break;
                     case Level::player:
                         cout << "Penelope starts at " << i << "," << k << endl;
-                        m_player = new Penelope(i * SPRITE_WIDTH, k * SPRITE_HEIGHT, this);
+                        m_player = new Penelope(startX, startY, this);
                         break;
                     case Level::exit:
                         cout << "Exit at " << i << "," << k << endl;
-                        m_actors.push_back(new Exit(i * SPRITE_WIDTH, k * SPRITE_HEIGHT, this));
+                        m_actors.push_back(new Exit(startX, startY, this));
                         break;
                     case Level::citizen:
                         m_citsLeft++;
@@ -78,10 +81,11 @@ int StudentWorld::init()
                         break;
                     case Level::wall:
                         cout << "Wall at " << i << "," << k << endl;
-                        m_actors.push_back(new Wall(i * SPRITE_WIDTH, k * SPRITE_HEIGHT, this));
+                        m_actors.push_back(new Wall(startX, startY, this));
                         break;
                     case Level::pit:
                         cout << "Pit at " << i << "," << k << endl;
+                        m_actors.push_back(new Pit(startX, startY, this));
                         break;
                     case Level::vaccine_goodie:
                         cout << "Vaccine at " << i << "," << k << endl;
@@ -111,11 +115,14 @@ int StudentWorld::move()
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         if (! (*it)->isDead())
             (*it)->doSomething();
-        if (m_player->isDead())
+        if (m_player->isDead()) {
+            decLives();
             return GWSTATUS_PLAYER_DIED;
-        if (m_levelFinished)
+        }
+        if (m_levelFinished) {
+            playSound(SOUND_LEVEL_FINISHED);
             return GWSTATUS_FINISHED_LEVEL;
-        // TODO: check if the player has beaten the level (no cits left, Penelope has reached the exit)
+        }
     }
 
     // go through and delete/erase every actor that's dead
@@ -156,7 +163,9 @@ void StudentWorld::cleanUp()
         it = m_actors.erase(it);
     }
 
-    delete m_player;
+    if (m_player != nullptr)
+        delete m_player;
+    m_player = nullptr;
 }
 
 

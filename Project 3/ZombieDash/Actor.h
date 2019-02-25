@@ -17,6 +17,7 @@ public:
     // Accessors
     virtual bool exits(const Actor* actor) const;
     virtual bool detectsExits() const;
+    virtual bool fallsIntoPit() const = 0;
     bool isDead() const;
     bool blocked(double destX, double destY) const;
     bool overlaps(const Actor* actor) const;
@@ -58,6 +59,7 @@ public:
 
     // Accessors
     virtual bool exits(const Actor* actor) const;
+    virtual bool fallsIntoPit() const;
     bool isInfected() const;
     int infectionCount() const;
 
@@ -128,11 +130,7 @@ public:
     EnvironmentalActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
-
-    // Mutators
-
-protected:
-    // Accessors
+    virtual bool fallsIntoPit() const;
 
     // Mutators
 
@@ -196,6 +194,7 @@ public:
     // Accessors
 
     // Mutators
+    virtual void doSomething();
 
 private:
 

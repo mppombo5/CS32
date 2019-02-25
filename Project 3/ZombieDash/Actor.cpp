@@ -18,10 +18,10 @@ bool intersectsBoundingBox(double destX, double destY, const Actor* otherActor) 
     // lower corners: destX,destY; otherX,otherY
 
     // checks:
-    // otherX <= destX                 <= otherX+SPRITE_WIDTH-1
+    // otherX <=        destX         <= otherX+SPRITE_WIDTH-1
     // otherX <= destX+SPRITE_WIDTH-1 <= otherX+SPRITE_WIDTH-1
     // and
-    // otherY <= destY                 <= otherY+SPRITE_HEIGHT-1
+    // otherY <=         destY         <= otherY+SPRITE_HEIGHT-1
     // otherY <= destY+SPRITE_HEIGHT-1 <= otherY+SPRITE_HEIGHT-1
 
     double otherX     = otherActor->getX();
@@ -71,7 +71,7 @@ bool Actor::blocks(double destX, double destY, const Actor *actor) const {
 // "blocked" checks whether or not the actor *is blocked* by any of StudentWorld's actors
 // "blocks" means it blocks the movement of an actor to a destination
 bool Actor::blocked(double destX, double destY) const {
-    list<Actor*> actorList = m_world->actorList();
+    list<Actor*> actorList = m_world->getActors();
     list<Actor*>::const_iterator it;
 
     for (it = actorList.begin(); it != actorList.end(); it++) {
@@ -86,10 +86,11 @@ bool Actor::blocked(double destX, double destY) const {
 
 bool Actor::overlaps(const Actor* other) const {
     // "XC" and "YC" mean "XCenter" and "YCenter"
-    double srcXC = (getX() + SPRITE_WIDTH) / 2;
-    double srcYC = (getY() + SPRITE_HEIGHT) / 2;
-    double otherXC = (other->getX() + SPRITE_WIDTH) / 2;
-    double otherYC = (other->getY() + SPRITE_HEIGHT) / 2;
+    // static cast to double in order to avoid integer division (maybe redundant, maybe not)
+    double srcXC = getX() + (static_cast<double>(SPRITE_WIDTH)/2);
+    double srcYC = getY() + (static_cast<double>(SPRITE_HEIGHT)/2);
+    double otherXC = other->getX() + (static_cast<double>(SPRITE_WIDTH)/2);
+    double otherYC = other->getY() + (static_cast<double>(SPRITE_HEIGHT)/2);
 
     // "dX" means delta(X)
     double dX = otherXC - srcXC;
@@ -121,16 +122,24 @@ void Actor::setm_dead() {
 /// SentientActor Implementation ///
 ////////////////////////////////////
 
+/// Constructor/Destructor ///
+
 SentientActor::SentientActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world)
         : Actor(imageID, startX, startY, startDir, depth, world) {
     m_infected = false;
     m_infectionCount = 0;
 }
 
+/// Accessors ///
+
 bool SentientActor::exits(const Actor* actor) const {
     if (actor->detectsExits())
         return overlaps(actor);
     return false;
+}
+
+bool SentientActor::fallsIntoPit() const {
+    return true;
 }
 
 bool SentientActor::isInfected() const{
@@ -140,6 +149,8 @@ bool SentientActor::isInfected() const{
 int SentientActor::infectionCount() const {
     return m_infectionCount;
 }
+
+/// Mutators ///
 
 void SentientActor::increaseInfection() {
     m_infectionCount++;
@@ -281,6 +292,10 @@ EnvironmentalActor::EnvironmentalActor(int imageID, double startX, double startY
 
 /// Accessors ///
 
+bool EnvironmentalActor::fallsIntoPit() const {
+    return false;
+}
+
 /// Mutators ///
 
 // some function here
@@ -323,7 +338,7 @@ Exit::Exit(double startX, double startY, StudentWorld *world)
 
 // This checks if an actor in StudentWorld has overlapped with this object
 bool Exit::citExits() const {
-    list<Actor*> actors = getWorld()->actorList();
+    list<Actor*> actors = getWorld()->getActors();
     list<Actor*>::iterator it;
 
     for (it = actors.begin(); it != actors.end(); it++) {
@@ -348,8 +363,8 @@ void Exit::doSomething() {
     // TODO: check for citizens exiting, implement once citizens are
 
     // debug statement to check for overlapping
-    if (playerExits())
-        cerr << "The player has touched the exit!" << endl;
+    //if (playerExits())
+    //    cerr << "The player has touched the exit!" << endl;
     if (playerExits() && getWorld()->citsLeft() == 0) {
         getWorld()->setFinished();
     }
@@ -366,6 +381,21 @@ void Exit::doSomething() {
 Pit::Pit(double startX, double startY, StudentWorld *world)
 : EnvironmentalActor(IID_PIT, startX, startY, right, 0, world) {
 
+}
+
+void Pit::doSomething() {
+    Penelope* player = getWorld()->getPlayer();
+    if (player->overlaps(this)) {
+        player->setDead();
+    }
+
+    list<Actor*> actors = getWorld()->getActors();
+    list<Actor*>::iterator it;
+    for (it = actors.begin(); it != actors.end(); it++) {
+        Actor* actor = *it;
+        if (actor->overlaps(this) && actor->fallsIntoPit())
+            actor->setDead();
+    }
 }
 
 

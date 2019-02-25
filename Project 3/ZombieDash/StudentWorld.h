@@ -27,7 +27,7 @@ public:
     // Accessors
       // Why does this have two const declarations? You tell me, this is the only way it would let me
       // use a const list elsewhere.
-    const std::list<Actor*>& actorList() const;
+    const std::list<Actor*>& getActors() const;
     Penelope* getPlayer() const;
     int citsLeft() const;
 
@@ -56,7 +56,7 @@ StudentWorld::~StudentWorld() {
 }
 
 inline
-const std::list<Actor*>& StudentWorld::actorList() const {
+const std::list<Actor*>& StudentWorld::getActors() const {
     return m_actors;
 }
 
