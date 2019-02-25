@@ -15,15 +15,16 @@ public:
     Actor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
+    virtual bool exits(const Actor* actor) const;
+    virtual bool detectsExits() const;
     bool isDead() const;
-    bool overlaps(const Actor& other) const;
     bool blocked(double destX, double destY) const;
+    bool overlaps(const Actor* actor) const;
     StudentWorld* getWorld() const;
 
-
     // Mutators
-    // Each actor can specify whether or not they can be killed (true/false)
-    virtual bool setDead() = 0;
+      // Each actor can specify whether or not they can be killed (true/false)
+    virtual void setDead();
     void safeMoveTo(double destX, double destY);
 
     // doSomething() to be called by move() function.
@@ -32,10 +33,10 @@ public:
 
 protected:
     // Accessors
-    virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
+    virtual bool blocks(double destX, double destY, const Actor *actor) const;
 
     // Mutators
-    // setDead() will be different for sentient and environmental actors, but I still need a way to set m_dead to false
+      // setDead() will be different for sentient and environmental actors, but I still need a way to set m_dead to false
     void setm_dead();
 
 private:
@@ -45,6 +46,10 @@ private:
 
 
 
+///////////////////////
+/// Sentient Actors ///
+///////////////////////
+
 // Actors that can move. For our purposes, zombies are indeed sentient.
 class SentientActor: public Actor {
 public:
@@ -52,17 +57,18 @@ public:
     SentientActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
+    virtual bool exits(const Actor* actor) const;
     bool isInfected() const;
     int infectionCount() const;
 
     // Mutators
     virtual void infect() = 0;
-    virtual bool setDead();
+    virtual void setDead();
     void increaseInfection();
 
 protected:
     // Accessors
-    virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
+    virtual bool blocks(double destX, double destY, const Actor *actor) const;
 
     // Mutators
     void setm_infected();
@@ -84,7 +90,7 @@ public:
     int getLandmines() const;
     int getFlames() const;
 
-    //Mutators
+    // Mutators
     virtual void doSomething();
     virtual void infect();
 
@@ -95,6 +101,25 @@ private:
 };
 
 
+
+class Zombie: public SentientActor {
+public:
+    // Constructor/Destructor
+
+    // Accessors
+    virtual bool exits(const Actor* actor) const;
+
+    // Mutators
+
+private:
+
+};
+
+
+
+////////////////////////////
+/// Environmental Actors ///
+////////////////////////////
 
 // Actors that do not move – e.g. walls, mines, flames, vomit, etc.
 class EnvironmentalActor: public Actor {
@@ -126,11 +151,10 @@ public:
 
     // Mutators
     virtual void doSomething();
-    virtual bool setDead();
 
 protected:
     // Accessors
-    virtual bool wouldBlock(double destX, double destY, const Actor* actor) const;
+    virtual bool blocks(double destX, double destY, const Actor *actor) const;
 
     // Mutators
 
@@ -146,11 +170,29 @@ public:
     Exit(double startX, double startY, StudentWorld* world);
 
     // Accessors
+    virtual bool detectsExits() const;
+    bool citExits() const;
+    bool playerExits() const;
 
     // Mutators
     virtual void doSomething();
 
 protected:
+    // Accessors
+
+    // Mutators
+
+private:
+
+};
+
+
+
+class Pit: public EnvironmentalActor {
+public:
+    // Constructor/Destructor
+    Pit(double startX, double startY, StudentWorld* world);
+
     // Accessors
 
     // Mutators
