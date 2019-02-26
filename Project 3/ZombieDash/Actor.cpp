@@ -61,15 +61,23 @@ bool Actor::detectsExits() const {
     return false;
 }
 
+bool Actor::blocksFlames(double destX, double destY, const Actor *actor) const {
+    return false;
+}
+
 bool Actor::isDead() const {
     return m_dead;
 }
 
 // Important distinction:
-// "blocked" checks whether or not the actor *is blocked* by any of StudentWorld's actors
-// "blocks" means it blocks the movement of an actor to a destination
-bool Actor::blocked(double destX, double destY) const {
-    return getWorld()->hasBlockingActor(destX, destY, this);
+// "blocked" checks whether or not the actor *is movementBlocked* by any of StudentWorld's actors
+// "blocks" means it blocksMovement the movement of an actor to a destination
+bool Actor::movementBlocked(double destX, double destY) const {
+    return getWorld()->hasActorBlockingMovement(destX, destY, this);
+}
+
+bool Actor::flameBlocked(double destX, double destY) const {
+    return getWorld()->hasActorBlockingFlames(destX, destY, this);
 }
 
 bool Actor::overlaps(const Actor* other) const {
@@ -103,7 +111,7 @@ StudentWorld* Actor::getWorld() const {
 
 // simply makes it easier to make something move, as the check is built-in
 void Actor::safeMoveTo(double destX, double destY) {
-    if (!blocked(destX, destY))
+    if (!movementBlocked(destX, destY))
         moveTo(destX, destY);
 }
 
@@ -147,6 +155,10 @@ bool SentientActor::damagedByFlame() const {
     return true;
 }
 
+bool SentientActor::triggersLandmines() const {
+    return true;
+}
+
 /// Mutators ///
 
 // TODO: when zombies are implemented, they shouldn't be infected
@@ -160,7 +172,7 @@ void SentientActor::setDead() {
         setm_dead();
 }
 
-bool SentientActor::blocks(double destX, double destY, const Actor *actor) const {
+bool SentientActor::blocksMovement(double destX, double destY, const Actor *actor) const {
     // IMPORTANT: make the actor parameter this, because this is the thing you're checking destX and destY against
     return intersectsBoundingBox(destX, destY, this);
 }
@@ -301,7 +313,11 @@ bool EnvironmentalActor::damagedByFlame() const {
     return false;
 }
 
-bool EnvironmentalActor::blocks(double destX, double destY, const Actor *actor) const {
+bool EnvironmentalActor::triggersLandmines() const {
+    return false;
+}
+
+bool EnvironmentalActor::blocksMovement(double destX, double destY, const Actor *actor) const {
     return false;
 }
 
@@ -325,7 +341,11 @@ Wall::Wall(double startX, double startY, StudentWorld* world)
 
 /// Accessors ///
 
-bool Wall::blocks(double destX, double destY, const Actor *actor) const {
+bool Wall::blocksFlames(double destX, double destY, const Actor* actor) const {
+    return true;
+}
+
+bool Wall::blocksMovement(double destX, double destY, const Actor *actor) const {
     return (intersectsBoundingBox(destX, destY, this));
 }
 
@@ -389,6 +409,10 @@ void Exit::doSomething() {
 // exits should never be dead
 void Exit::setDead() {}
 
+bool Exit::blocksFlames(double destX, double destY, const Actor* actor) const {
+    return true;
+}
+
 
 
 //////////////////////////
@@ -438,11 +462,6 @@ Flame::Flame(double startX, double startY, Direction dir, StudentWorld *world)
     m_ticksAlive = 0;
 }
 
-
-/// Accessors ///
-
-
-
 /// Mutators ///
 
 void Flame::doSomething() {
@@ -465,10 +484,14 @@ void Flame::doSomething() {
 /// Vomit Implementation ///
 ////////////////////////////
 
+/// Constructor ///
+
 Vomit::Vomit(double startX, double startY, Direction dir, StudentWorld *world)
 : EnvironmentalActor(IID_VOMIT, startX, startY, dir, 0, world) {
 
 }
+
+/// Mutators ///
 
 void Vomit::doSomething() {
     m_ticksAlive++;
@@ -486,18 +509,78 @@ void Vomit::doSomething() {
 
 
 
+///////////////////////////////
+/// Landmine Implementation ///
+///////////////////////////////
+
+/// Constructor ///
+
+Landmine::Landmine(double startX, double startY, StudentWorld *world)
+: EnvironmentalActor(IID_LANDMINE, startX, startY, right, 1, world) {
+    m_safetyTicks = 30;
+}
+
+/// Accessors ///
+
+bool Landmine::damagedByFlame() const {
+    return true;
+}
+
+bool Landmine::isActive() const {
+    return m_safetyTicks <= 0;
+}
+
+/// Mutators ///
+
+void Landmine::doSomething() {
+    if (isDead())
+        return;
+
+    if (!isActive()) {
+        m_safetyTicks--;
+        return;
+    }
+
+    if (getWorld()->hasOverlappingActor(this, triggersLandmines())) {
+        setDead();
+        getWorld()->playSound(SOUND_LANDMINE_EXPLODE);
+
+        // nested for loops to add flames in a 3x3 pattern
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                // go from -1 to 1, so that would be -1 + i or j
+                int multX = -1 + i;
+                int multY = -1 + j;
+                double destX = getX() + (SPRITE_WIDTH * multX);
+                double destY = getY() + (SPRITE_HEIGHT * multY);
+                if (!flameBlocked(destX, destY))
+                    getWorld()->addActor(new Flame(destX, destY, right, getWorld()));
+            }
+        }
+        getWorld()->addActor(new Pit(getX(), getY(), getWorld()));
+    }
+}
+
+
+
 /////////////////////////////
 /// Goodie Implementation ///
 /////////////////////////////
+
+/// Constructor ///
 
 Goodie::Goodie(int imageID, double startX, double startY, StudentWorld *world)
 : EnvironmentalActor(imageID, startX, startY, right, 1, world) {
 
 }
 
+/// Accessors ///
+
 bool Goodie::damagedByFlame() const {
     return true;
 }
+
+/// Mutators ///
 
 // the goodies' implementations of doSomething would be nearly identical – so they're all in one with
 // a single differentiated function.
@@ -521,10 +604,14 @@ void Goodie::doSomething() {
 /// Vaccine Implementation ///
 //////////////////////////////
 
+/// Constructor ///
+
 Vaccine::Vaccine(double startX, double startY, StudentWorld *world)
 : Goodie(IID_VACCINE_GOODIE, startX, startY, world) {
 
 }
+
+/// Mutators ///
 
 void Vaccine::addToInventory() {
     getWorld()->getPlayer()->addVaccine();
@@ -536,10 +623,14 @@ void Vaccine::addToInventory() {
 /// GasCan Implementation ///
 /////////////////////////////
 
+/// Constructor ///
+
 GasCan::GasCan(double startX, double startY, StudentWorld *world)
 : Goodie(IID_GAS_CAN_GOODIE, startX, startY, world) {
 
 }
+
+/// Mutators ///
 
 void GasCan::addToInventory() {
     getWorld()->getPlayer()->addFlames();
@@ -551,10 +642,14 @@ void GasCan::addToInventory() {
 /// LandmineGoodie Implementation ///
 /////////////////////////////////////
 
+/// Constructor ///
+
 LandmineGoodie::LandmineGoodie(double startX, double startY, StudentWorld *world)
 : Goodie(IID_LANDMINE_GOODIE, startX, startY, world) {
 
 }
+
+/// Mutators ///
 
 void LandmineGoodie::addToInventory() {
     getWorld()->getPlayer()->addLandmines();

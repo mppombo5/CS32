@@ -172,13 +172,38 @@ void StudentWorld::cleanUp()
 
 // Functions that aren't the big three
 
+void StudentWorld::addActor(Actor *a) {
+    m_actors.push_back(a);
+}
+
 // previously looped through m_actors in actor implementation, now moved to here
-bool StudentWorld::hasBlockingActor(double destX, double destY, const Actor* actor) const {
+bool StudentWorld::hasActorBlockingMovement(double destX, double destY, const Actor *actor) const {
     list<Actor*>::const_iterator it;
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
-        // check if each actor wouuld block actor
-        if ((*it)->blocks(destX, destY, actor))
+        // check if each actor would block actor
+        if ((*it)->blocksMovement(destX, destY, actor))
+            return true;
+    }
+    return false;
+}
+
+bool StudentWorld::hasActorBlockingFlames(double destX, double destY, const Actor *actor) const {
+    list <Actor*>::const_iterator it;
+
+    for (it = m_actors.begin(); it  != m_actors.end(); it++) {
+        if ((*it)->blocksFlames(destX, destY, actor))
+            return true;
+    }
+    return false;
+}
+
+// check if actors are overlapping with a certain actor, and a secondary condition if applicable
+bool StudentWorld::hasOverlappingActor(const Actor* checker, bool secondaryCondition) const {
+    list<Actor*>::const_iterator it;
+
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        if ((*it)->overlaps(checker) && secondaryCondition)
             return true;
     }
     return false;

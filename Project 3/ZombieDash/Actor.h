@@ -16,10 +16,14 @@ public:
 
     // Accessors
     virtual bool fallsIntoPits() const = 0;
-    virtual bool blocks(double destX, double destY, const Actor *actor) const = 0;
+    virtual bool blocksMovement(double destX, double destY, const Actor *actor) const = 0;
     virtual bool damagedByFlame() const = 0;
+    virtual bool triggersLandmines() const = 0;
     virtual bool exits(const Actor* actor) const;
     virtual bool detectsExits() const;
+    virtual bool blocksFlames(double destX, double destY, const Actor* actor) const;
+    bool movementBlocked(double destX, double destY) const;
+    bool flameBlocked(double destX, double destY) const;
     bool isDead() const;
     bool overlaps(const Actor* actor) const;
     bool isInfected() const;
@@ -33,7 +37,6 @@ public:
       // Each actor can specify whether or not they can be killed (true/false)
     virtual void setDead() = 0;
     virtual void infect();
-    bool blocked(double destX, double destY) const;
     void safeMoveTo(double destX, double destY);
     void increaseInfection();
 
@@ -68,6 +71,7 @@ public:
     virtual bool exits(const Actor* actor) const;
     virtual bool fallsIntoPits() const;
     virtual bool damagedByFlame() const;
+    virtual bool triggersLandmines() const;
 
     // Mutators
     virtual void setDead();
@@ -75,7 +79,7 @@ public:
 
 protected:
     // Accessors
-    virtual bool blocks(double destX, double destY, const Actor *actor) const;
+    virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
 
     // Mutators
 
@@ -141,13 +145,14 @@ public:
     // Accessors
     virtual bool fallsIntoPits() const;
     virtual bool damagedByFlame() const;
+    virtual bool triggersLandmines() const;
 
     // Mutators
     virtual void setDead();
 
 protected:
     // Accessors
-    virtual bool blocks(double destX, double destY, const Actor *actor) const;
+    virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
 
 private:
 
@@ -163,13 +168,14 @@ public:
     Wall(double startX, double startY, StudentWorld* world);
 
     // Accessors
+    bool blocksFlames(double destX, double destY, const Actor* actor) const;
 
     // Mutators
     virtual void doSomething();
 
 protected:
     // Accessors
-    virtual bool blocks(double destX, double destY, const Actor *actor) const;
+    virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
 
     // Mutators
     virtual void setDead();
@@ -195,6 +201,7 @@ public:
     // Mutators
     virtual void doSomething();
     virtual void setDead();
+    virtual bool blocksFlames(double destX, double destY, const Actor* actor) const;
 
 protected:
     // Accessors
@@ -264,6 +271,26 @@ private:
 
 
 
+/// Landmines ///
+
+class Landmine: public EnvironmentalActor {
+public:
+    // Constructor/Destructor
+    Landmine(double startX, double startY, StudentWorld* world);
+
+    // Accessors
+    virtual bool damagedByFlame() const;
+    bool isActive() const;
+
+    // Mutators
+    virtual void doSomething();
+
+private:
+    int m_safetyTicks;
+};
+
+
+
 ///////////////
 /// Goodies ///
 ///////////////
@@ -320,6 +347,10 @@ class LandmineGoodie: public Goodie {
 public:
     // Constructor/Destructor
     LandmineGoodie(double startX, double startY, StudentWorld* world);
+
+    // Accessors
+
+    // Mutators
 
 protected:
     virtual void addToInventory();

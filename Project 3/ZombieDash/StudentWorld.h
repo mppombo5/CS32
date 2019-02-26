@@ -21,6 +21,7 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
+    void addActor(Actor* a);
     void decCitsLeft();
     void setFinished();
       // secondaryCondition is the condition that must be true to kill the actors
@@ -31,7 +32,9 @@ public:
     // Accessors
     Penelope* getPlayer() const;
     int citsLeft() const;
-    bool hasBlockingActor(double destX, double destY, const Actor* actor) const;
+    bool hasActorBlockingMovement(double destX, double destY, const Actor *actor) const;
+    bool hasActorBlockingFlames(double destX, double destY, const Actor* actor) const;
+    bool hasOverlappingActor(const Actor* checker, bool secondaryCondition) const;
 
 private:
     // I chose a list because it automatically removes any deleted objects instead of having to step over deleted ones.
