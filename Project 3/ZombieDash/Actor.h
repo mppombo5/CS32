@@ -84,6 +84,8 @@ private:
 
 
 
+/// Penelope ///
+
 class Penelope: public SentientActor {
 public:
     // Constructor/Destructor
@@ -96,6 +98,10 @@ public:
 
     // Mutators
     virtual void doSomething();
+    void addVaccine();
+    void addFlames();
+    void addLandmines();
+
 
 private:
     int m_vaccines;
@@ -104,6 +110,8 @@ private:
 };
 
 
+
+/// Zombie ///
 
 class Zombie: public SentientActor {
 public:
@@ -147,6 +155,8 @@ private:
 
 
 
+/// Wall ///
+
 class Wall: public EnvironmentalActor {
 public:
     // Constructor/Destructor
@@ -169,6 +179,8 @@ private:
 };
 
 
+
+/// Exit ///
 
 class Exit: public EnvironmentalActor {
 public:
@@ -195,6 +207,8 @@ private:
 
 
 
+/// Pit ///
+
 class Pit: public EnvironmentalActor {
 public:
     // Constructor/Destructor
@@ -211,6 +225,8 @@ private:
 };
 
 
+
+/// Flame ///
 
 // To be constructed whenever the flamethrower necessitates it
 class Flame: public EnvironmentalActor {
@@ -229,6 +245,8 @@ private:
 
 
 
+/// Vomit ///
+
 // To be constructed whenever a Zombie necessitates it
 class Vomit: public EnvironmentalActor {
 public:
@@ -242,6 +260,69 @@ public:
 
 private:
     int m_ticksAlive;
+};
+
+
+
+///////////////
+/// Goodies ///
+///////////////
+
+class Goodie: public EnvironmentalActor {
+public:
+    // Constructor/Destructor
+    Goodie(int imageID, double startX, double startY, StudentWorld* world);
+
+    // Accessors
+    virtual bool damagedByFlame() const;
+
+    // Mutators
+    void doSomething();
+
+protected:
+    // Mutators
+    virtual void addToInventory() = 0;
+
+private:
+};
+
+
+
+/// Vaccines ///
+
+class Vaccine: public Goodie {
+public:
+    // Constructor/Destructor
+    Vaccine(double startX, double startY, StudentWorld* world);
+
+protected:
+    virtual void addToInventory();
+};
+
+
+
+/// Gas Can ///
+
+class GasCan: public Goodie {
+public:
+    // Constructor/Destructor
+    GasCan(double startX, double startY, StudentWorld* world);
+
+protected:
+    virtual void addToInventory();
+};
+
+
+
+/// Landmine Goodie ///
+
+class LandmineGoodie: public Goodie {
+public:
+    // Constructor/Destructor
+    LandmineGoodie(double startX, double startY, StudentWorld* world);
+
+protected:
+    virtual void addToInventory();
 };
 
 #endif // ACTOR_H_

@@ -46,6 +46,8 @@ private:
     bool m_levelFinished;
 };
 
+
+
 /// Inline Declarations ///
 
 inline

@@ -247,6 +247,18 @@ void Penelope::doSomething() {
     }
 }
 
+void Penelope::addVaccine() {
+    m_vaccines++;
+}
+
+void Penelope::addFlames() {
+    m_flames += 5;
+}
+
+void Penelope::addLandmines() {
+    m_landmines += 2;
+}
+
 
 
 /////////////////////////////
@@ -450,7 +462,7 @@ void Flame::doSomething() {
 
 
 ////////////////////////////
-/// Flame Implementation ///
+/// Vomit Implementation ///
 ////////////////////////////
 
 Vomit::Vomit(double startX, double startY, Direction dir, StudentWorld *world)
@@ -474,6 +486,79 @@ void Vomit::doSomething() {
 
 
 
+/////////////////////////////
+/// Goodie Implementation ///
+/////////////////////////////
+
+Goodie::Goodie(int imageID, double startX, double startY, StudentWorld *world)
+: EnvironmentalActor(imageID, startX, startY, right, 1, world) {
+
+}
+
+bool Goodie::damagedByFlame() const {
+    return true;
+}
+
+// the goodies' implementations of doSomething would be nearly identical – so they're all in one with
+// a single differentiated function.
+void Goodie::doSomething() {
+    if (isDead())
+        return;
+
+    Penelope* player = getWorld()->getPlayer();
+    if(!player->isDead() && player->overlaps(this)) {
+        getWorld()->increaseScore(50);
+        setDead();
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        // THIS is what differentiates the goodies from each other – what they add to the player's inventory
+        addToInventory();
+    }
+}
+
+
+
+//////////////////////////////
+/// Vaccine Implementation ///
+//////////////////////////////
+
+Vaccine::Vaccine(double startX, double startY, StudentWorld *world)
+: Goodie(IID_VACCINE_GOODIE, startX, startY, world) {
+
+}
+
+void Vaccine::addToInventory() {
+    getWorld()->getPlayer()->addVaccine();
+}
+
+
+
+/////////////////////////////
+/// GasCan Implementation ///
+/////////////////////////////
+
+GasCan::GasCan(double startX, double startY, StudentWorld *world)
+: Goodie(IID_GAS_CAN_GOODIE, startX, startY, world) {
+
+}
+
+void GasCan::addToInventory() {
+    getWorld()->getPlayer()->addFlames();
+}
+
+
+
+/////////////////////////////////////
+/// LandmineGoodie Implementation ///
+/////////////////////////////////////
+
+LandmineGoodie::LandmineGoodie(double startX, double startY, StudentWorld *world)
+: Goodie(IID_LANDMINE_GOODIE, startX, startY, world) {
+
+}
+
+void LandmineGoodie::addToInventory() {
+    getWorld()->getPlayer()->addLandmines();
+}
 
 
 

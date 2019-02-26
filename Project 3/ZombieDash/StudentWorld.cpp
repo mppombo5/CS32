@@ -88,12 +88,15 @@ int StudentWorld::init()
                         break;
                     case Level::vaccine_goodie:
                         cout << "Vaccine at " << i << "," << k << endl;
+                        m_actors.push_back(new Vaccine(startX, startY, this));
                         break;
                     case Level::gas_can_goodie:
                         cout << "Gas can at " << i << "," << k << endl;
+                        m_actors.push_back(new GasCan(startX, startY, this));
                         break;
                     case Level::landmine_goodie:
                         cout << "Landmine at " << i << "," << k << endl;
+                        m_actors.push_back(new LandmineGoodie(startX, startY, this));
                         break;
                 }
             }
