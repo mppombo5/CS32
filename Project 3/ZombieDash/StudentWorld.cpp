@@ -59,7 +59,6 @@ int StudentWorld::init()
                 switch (objectAtCoords) {
                     // TODO: add each actor to m_actors according to its space (constructor coordinates)
                     case Level::empty:
-                        cout << "Empty space at " << i << "," << k << endl;
                         break;
                     case Level::smart_zombie:
                         cout << "Smart zombie at " << i << "," << k << endl;
@@ -144,9 +143,9 @@ int StudentWorld::move()
     oss.fill('0');
     oss << setw(6) << getScore() << setw(0) << "  Level: ";
     oss.fill(' ');
-    oss << setw(2) << getLevel() << setw(0) << "  Lives: " << getLives() << "  Vaccines: "
-    << setw(2) << m_player->getVaccines() << setw(0) << "  Flames: " << setw(2) << m_player->getFlames()
-    << setw(0) << "  Mines: " << setw(2) << m_player->getLandmines() << setw(0) << "  Infected: " << m_player->infectionCount();
+    oss << setw(1) << getLevel() << setw(0) << "  Lives: " << getLives() << "  Vaccines: "
+        << setw(1) << m_player->getVaccines() << setw(0) << "  Flames: " << setw(1) << m_player->getFlames()
+        << setw(0) << "  Mines: " << setw(1) << m_player->getLandmines() << setw(0) << "  Infected: " << m_player->infectionCount();
     setGameStatText(oss.str());
 
 
@@ -167,6 +166,54 @@ void StudentWorld::cleanUp()
         delete m_player;
     m_player = nullptr;
 }
+
+// Functions that aren't the big three
+
+// previously looped through m_actors in actor implementation, now moved to here
+bool StudentWorld::hasBlockingActor(double destX, double destY, const Actor* actor) const {
+    list<Actor*>::const_iterator it;
+
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        // check if each actor wouuld block actor
+        if ((*it)->blocks(destX, destY, actor))
+            return true;
+    }
+    return false;
+}
+
+// targetActors condition is specifically to determine whether the target is flammable or falling in a pit
+void StudentWorld::killOverlappingActors(const Actor *killer, bool targetActorsCondition) {
+    list<Actor*>::iterator it;
+
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* actor = *it;
+        if (actor->overlaps(killer) && targetActorsCondition)
+            actor->setDead();
+    }
+}
+
+void StudentWorld::infectOverlappingActors(const Actor* killer) {
+    list<Actor*>::iterator it;
+
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* actor = *it;
+        if (actor->overlaps(killer))
+            actor->infect();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -23,13 +23,15 @@ public:
     virtual void cleanUp();
     void decCitsLeft();
     void setFinished();
+      // secondaryCondition is the condition that must be true to kill the actors
+      // e.g. damagedByFlame, fallsIntoPits
+    void killOverlappingActors(const Actor* killer, bool targetActorsCondition);
+    void infectOverlappingActors(const Actor* killer);
 
     // Accessors
-      // Why does this have two const declarations? You tell me, this is the only way it would let me
-      // use a const list elsewhere.
-    const std::list<Actor*>& getActors() const;
     Penelope* getPlayer() const;
     int citsLeft() const;
+    bool hasBlockingActor(double destX, double destY, const Actor* actor) const;
 
 private:
     // I chose a list because it automatically removes any deleted objects instead of having to step over deleted ones.
@@ -53,11 +55,6 @@ StudentWorld::StudentWorld(std::string assetPath)
 inline
 StudentWorld::~StudentWorld() {
     cleanUp();
-}
-
-inline
-const std::list<Actor*>& StudentWorld::getActors() const {
-    return m_actors;
 }
 
 inline

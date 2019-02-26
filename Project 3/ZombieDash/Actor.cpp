@@ -45,6 +45,8 @@ Actor::Actor(int imageID, double startX, double startY, Direction startDir, int 
         : GraphObject(imageID, startX, startY, startDir, depth) {
     m_world = world;
     m_dead = false;
+    m_infected = false;
+    m_infectionCount = 0;
 }
 
 /// Accessors ///
@@ -63,25 +65,11 @@ bool Actor::isDead() const {
     return m_dead;
 }
 
-bool Actor::blocks(double destX, double destY, const Actor *actor) const {
-    return false;
-}
-
 // Important distinction:
 // "blocked" checks whether or not the actor *is blocked* by any of StudentWorld's actors
 // "blocks" means it blocks the movement of an actor to a destination
 bool Actor::blocked(double destX, double destY) const {
-    list<Actor*> actorList = m_world->getActors();
-    list<Actor*>::const_iterator it;
-
-    for (it = actorList.begin(); it != actorList.end(); it++) {
-        // check if each actor **would block** this one
-        if ((*it)->blocks(destX, destY, this)) {
-            return true;
-        }
-    }
-    // nothing returned true, so it's false
-    return false;
+    return getWorld()->hasBlockingActor(destX, destY, this);
 }
 
 bool Actor::overlaps(const Actor* other) const {
@@ -99,14 +87,19 @@ bool Actor::overlaps(const Actor* other) const {
     return (dX * dX) + (dY * dY) <= 100;
 }
 
+bool Actor::isInfected() const {
+    return m_infected;
+}
+
+int Actor::infectionCount() const {
+    return m_infectionCount;
+}
+
 StudentWorld* Actor::getWorld() const {
     return m_world;
 }
 
 /// Mutators ///
-
-// By default, things shouldn't die unless explicitly defined that they can
-void Actor::setDead() {}
 
 // simply makes it easier to make something move, as the check is built-in
 void Actor::safeMoveTo(double destX, double destY) {
@@ -114,8 +107,18 @@ void Actor::safeMoveTo(double destX, double destY) {
         moveTo(destX, destY);
 }
 
+void Actor::increaseInfection() {
+    m_infectionCount++;
+}
+
 void Actor::setm_dead() {
     m_dead = true;
+}
+
+void Actor::infect() {}
+
+void Actor::setm_infected() {
+    m_infected = true;
 }
 
 ////////////////////////////////////
@@ -126,8 +129,6 @@ void Actor::setm_dead() {
 
 SentientActor::SentientActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world)
         : Actor(imageID, startX, startY, startDir, depth, world) {
-    m_infected = false;
-    m_infectionCount = 0;
 }
 
 /// Accessors ///
@@ -138,22 +139,20 @@ bool SentientActor::exits(const Actor* actor) const {
     return false;
 }
 
-bool SentientActor::fallsIntoPit() const {
+bool SentientActor::fallsIntoPits() const {
     return true;
 }
 
-bool SentientActor::isInfected() const{
-    return m_infected;
-}
-
-int SentientActor::infectionCount() const {
-    return m_infectionCount;
+bool SentientActor::damagedByFlame() const {
+    return true;
 }
 
 /// Mutators ///
 
-void SentientActor::increaseInfection() {
-    m_infectionCount++;
+// TODO: when zombies are implemented, they shouldn't be infected
+void SentientActor::infect() {
+    if (!isInfected())
+        setm_infected();
 }
 
 void SentientActor::setDead() {
@@ -164,10 +163,6 @@ void SentientActor::setDead() {
 bool SentientActor::blocks(double destX, double destY, const Actor *actor) const {
     // IMPORTANT: make the actor parameter this, because this is the thing you're checking destX and destY against
     return intersectsBoundingBox(destX, destY, this);
-}
-
-void SentientActor::setm_infected() {
-    m_infected = true;
 }
 
 ///////////////////////////////
@@ -250,13 +245,6 @@ void Penelope::doSomething() {
                 break;
         }
     }
-
-
-}
-
-void Penelope::infect() {
-    if (!isInfected())
-        setm_infected();
 }
 
 
@@ -292,13 +280,25 @@ EnvironmentalActor::EnvironmentalActor(int imageID, double startX, double startY
 
 /// Accessors ///
 
-bool EnvironmentalActor::fallsIntoPit() const {
+bool EnvironmentalActor::fallsIntoPits() const {
+    return false;
+}
+
+// Environmental actors (except landmines) are not damaged by flames, but goodies are
+bool EnvironmentalActor::damagedByFlame() const {
+    return false;
+}
+
+bool EnvironmentalActor::blocks(double destX, double destY, const Actor *actor) const {
     return false;
 }
 
 /// Mutators ///
 
-// some function here
+void EnvironmentalActor::setDead() {
+    if (!isDead())
+        setm_dead();
+}
 
 
 
@@ -321,6 +321,9 @@ bool Wall::blocks(double destX, double destY, const Actor *actor) const {
 
 void Wall::doSomething() {}
 
+// walls should never be set to dead
+void Wall::setDead() {}
+
 
 
 ///////////////////////////
@@ -337,7 +340,8 @@ Exit::Exit(double startX, double startY, StudentWorld *world)
 /// Accessors ///
 
 // This checks if an actor in StudentWorld has overlapped with this object
-bool Exit::citExits() const {
+// TODO: move the loop to the StudentWorld class
+/*bool Exit::citExits() const {
     list<Actor*> actors = getWorld()->getActors();
     list<Actor*>::iterator it;
 
@@ -346,7 +350,7 @@ bool Exit::citExits() const {
             return true;
     }
     return false;
-}
+}*/
 
 bool Exit::playerExits() const {
     return getWorld()->getPlayer()->exits(this);
@@ -370,6 +374,9 @@ void Exit::doSomething() {
     }
 }
 
+// exits should never be dead
+void Exit::setDead() {}
+
 
 
 //////////////////////////
@@ -383,21 +390,87 @@ Pit::Pit(double startX, double startY, StudentWorld *world)
 
 }
 
+/// Mutators ///
+
 void Pit::doSomething() {
     Penelope* player = getWorld()->getPlayer();
     if (player->overlaps(this)) {
         player->setDead();
     }
 
-    list<Actor*> actors = getWorld()->getActors();
+    getWorld()->killOverlappingActors(this, fallsIntoPits());
+
+    // just here in case killOverlappingActors doesn't work
+    /*list<Actor*> actors = getWorld()->getActors();
     list<Actor*>::iterator it;
     for (it = actors.begin(); it != actors.end(); it++) {
         Actor* actor = *it;
-        if (actor->overlaps(this) && actor->fallsIntoPit())
+        if (actor->overlaps(this) && actor->fallsIntoPits())
             actor->setDead();
-    }
+    }*/
 }
 
+// pits should never be dead
+void Pit::setDead() {}
+
+
+
+////////////////////////////
+/// Flame Implementation ///
+////////////////////////////
+
+/// Constructor/Destructor ///
+
+Flame::Flame(double startX, double startY, Direction dir, StudentWorld *world)
+: EnvironmentalActor(IID_FLAME, startX, startY, dir, 0, world) {
+    m_ticksAlive = 0;
+}
+
+
+/// Accessors ///
+
+
+
+/// Mutators ///
+
+void Flame::doSomething() {
+    m_ticksAlive++;
+
+    if (isDead())
+        return;
+
+    if (m_ticksAlive > 2) {
+        setDead();
+        return;
+    }
+
+    getWorld()->killOverlappingActors(this, damagedByFlame());
+}
+
+
+
+////////////////////////////
+/// Flame Implementation ///
+////////////////////////////
+
+Vomit::Vomit(double startX, double startY, Direction dir, StudentWorld *world)
+: EnvironmentalActor(IID_VOMIT, startX, startY, dir, 0, world) {
+
+}
+
+void Vomit::doSomething() {
+    m_ticksAlive++;
+
+    if (isDead())
+        return;
+
+    if (m_ticksAlive > 2) {
+        setDead();
+        return;
+    }
+
+    getWorld()->infectOverlappingActors(this);
+}
 
 
 

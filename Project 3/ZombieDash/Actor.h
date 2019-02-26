@@ -15,34 +15,41 @@ public:
     Actor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
+    virtual bool fallsIntoPits() const = 0;
+    virtual bool blocks(double destX, double destY, const Actor *actor) const = 0;
+    virtual bool damagedByFlame() const = 0;
     virtual bool exits(const Actor* actor) const;
     virtual bool detectsExits() const;
-    virtual bool fallsIntoPit() const = 0;
     bool isDead() const;
-    bool blocked(double destX, double destY) const;
     bool overlaps(const Actor* actor) const;
+    bool isInfected() const;
+    int infectionCount() const;
     StudentWorld* getWorld() const;
 
     // Mutators
-      // Each actor can specify whether or not they can be killed (true/false)
-    virtual void setDead();
-    void safeMoveTo(double destX, double destY);
-
-    // doSomething() to be called by move() function.
-    // return false if the actor died
+      // doSomething() to be called by move() function.
+      // return false if the actor died
     virtual void doSomething() = 0;
+      // Each actor can specify whether or not they can be killed (true/false)
+    virtual void setDead() = 0;
+    virtual void infect();
+    bool blocked(double destX, double destY) const;
+    void safeMoveTo(double destX, double destY);
+    void increaseInfection();
 
 protected:
     // Accessors
-    virtual bool blocks(double destX, double destY, const Actor *actor) const;
 
     // Mutators
       // setDead() will be different for sentient and environmental actors, but I still need a way to set m_dead to false
     void setm_dead();
+    void setm_infected();
 
 private:
     StudentWorld* m_world;
     bool m_dead;
+    bool m_infected;
+    int m_infectionCount;
 };
 
 
@@ -59,25 +66,20 @@ public:
 
     // Accessors
     virtual bool exits(const Actor* actor) const;
-    virtual bool fallsIntoPit() const;
-    bool isInfected() const;
-    int infectionCount() const;
+    virtual bool fallsIntoPits() const;
+    virtual bool damagedByFlame() const;
 
     // Mutators
-    virtual void infect() = 0;
     virtual void setDead();
-    void increaseInfection();
+    virtual void infect();
 
 protected:
     // Accessors
     virtual bool blocks(double destX, double destY, const Actor *actor) const;
 
     // Mutators
-    void setm_infected();
 
 private:
-    bool m_infected;
-    int m_infectionCount;
 };
 
 
@@ -94,7 +96,6 @@ public:
 
     // Mutators
     virtual void doSomething();
-    virtual void infect();
 
 private:
     int m_vaccines;
@@ -130,9 +131,15 @@ public:
     EnvironmentalActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
-    virtual bool fallsIntoPit() const;
+    virtual bool fallsIntoPits() const;
+    virtual bool damagedByFlame() const;
 
     // Mutators
+    virtual void setDead();
+
+protected:
+    // Accessors
+    virtual bool blocks(double destX, double destY, const Actor *actor) const;
 
 private:
 
@@ -155,6 +162,7 @@ protected:
     virtual bool blocks(double destX, double destY, const Actor *actor) const;
 
     // Mutators
+    virtual void setDead();
 
 private:
 
@@ -174,6 +182,7 @@ public:
 
     // Mutators
     virtual void doSomething();
+    virtual void setDead();
 
 protected:
     // Accessors
@@ -195,9 +204,44 @@ public:
 
     // Mutators
     virtual void doSomething();
+    virtual void setDead();
 
 private:
 
+};
+
+
+
+// To be constructed whenever the flamethrower necessitates it
+class Flame: public EnvironmentalActor {
+public:
+    // Constructor/Destructor
+    Flame(double startX, double startY, Direction dir, StudentWorld* world);
+
+    // Accessors
+
+    // Mutators
+    virtual void doSomething();
+
+private:
+    int m_ticksAlive;
+};
+
+
+
+// To be constructed whenever a Zombie necessitates it
+class Vomit: public EnvironmentalActor {
+public:
+    // Constructor/Destructor
+    Vomit(double startX, double startY, Direction dir, StudentWorld* world);
+
+    // Accessors
+
+    // Mutators
+    virtual void doSomething();
+
+private:
+    int m_ticksAlive;
 };
 
 #endif // ACTOR_H_
