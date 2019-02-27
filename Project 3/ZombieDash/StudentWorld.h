@@ -31,8 +31,8 @@ public:
     // Accessors
     Penelope* getPlayer() const;
     int citsLeft() const;
-    bool hasActorBlockingMovement(double destX, double destY, const Actor *actor) const;
-    bool hasActorBlockingFlames(double destX, double destY, const Actor* actor) const;
+    bool hasActorBlockingMovement(double destX, double destY, const Actor *blocker) const;
+    bool hasActorBlockingFlames(double destX, double destY, const Actor* blocker) const;
     bool actorTriggersLandmine(const Actor* checker) const;
 
 private:
@@ -46,6 +46,7 @@ private:
 
     // whether or not the level should be marked as finished
     bool m_levelFinished;
+    int m_debugTicks;
 };
 
 

@@ -268,12 +268,47 @@ void Penelope::doSomething() {
                 safeMoveTo(destX, destY);
                 break;
             }
+            // flamethrower: spawn three flames in the direction that the player is facing
+            case KEY_PRESS_SPACE: {
+                if (getFlames() >= 1) {
+                    m_flames--;
+                    getWorld()->playSound(SOUND_PLAYER_FIRE);
+                    // make multipliers by which to multiply the x and y directions, so
+                    // everything can be condensed into one generalized function
+                    int multX = 0;
+                    int multY = 0;
+                    switch (getDirection()) {
+                        case up:
+                            multY = 1;
+                            break;
+                        case right:
+                            multX = 1;
+                            break;
+                        case down:
+                            multY = -1;
+                            break;
+                        case left:
+                            multX = -1;
+                            break;
+                        default: break;
+                    }
+                    for (int i = 1; i <= 3; i++) {
+                        double destX = getX() + (i * (multX * SPRITE_WIDTH));
+                        double destY = getY() + (i * (multY * SPRITE_HEIGHT));
+                        if (!flameBlocked(destX, destY))
+                            getWorld()->addActor(new Flame(destX, destY, getDirection(), getWorld()));
+                        else
+                            break;
+                    }
+                }
+                break;
+            }
+            // landmine: spawn a landmine where the player is standing
             case KEY_PRESS_TAB: {
                 getWorld()->addActor(new Landmine(getX(), getY(), getWorld()));
                 break;
             }
-            default:
-                break;
+            default: break;
         }
     }
 }
@@ -443,6 +478,12 @@ bool Exit::blocksFlames(double destX, double destY, const Actor* actor) const {
 Pit::Pit(double startX, double startY, StudentWorld *world)
 : EnvironmentalActor(IID_PIT, startX, startY, right, 0, world) {
 
+}
+
+/// Accessors ///
+
+bool Pit::damagedByFlame() const {
+    return false;
 }
 
 /// Mutators ///

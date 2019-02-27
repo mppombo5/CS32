@@ -223,6 +223,7 @@ public:
     Pit(double startX, double startY, StudentWorld* world);
 
     // Accessors
+    virtual bool damagedByFlame() const;
 
     // Mutators
     virtual void doSomething();

@@ -47,6 +47,7 @@ int StudentWorld::init()
 
         m_citsLeft = 0;
         m_levelFinished = false;
+        m_debugTicks = 0;
 
         // first we loop through and add each actor to m_actors according to the level file
         // nested for loops to check for each spot on the grid
@@ -111,6 +112,16 @@ int StudentWorld::init()
 // NOTE: to check which one to remove, just set it to dead
 int StudentWorld::move()
 {
+    m_debugTicks++;
+    if (m_debugTicks == 60)
+        cerr << "Flames about to be spawned on top of each other!" << endl;
+    if (m_debugTicks == 100) {
+        double x = 5*16;
+        for (int i = 0; i < 2; i++)
+            addActor(new Flame(x, x, 1, this));
+        addActor(new Pit(x, x, this));
+        addActor(new Landmine(x, x, this));
+    }
     m_player->doSomething();
     list<Actor*>::iterator it;
     // have each actor do something and check if the player died
@@ -172,39 +183,47 @@ void StudentWorld::cleanUp()
 
 // Functions that aren't the big three
 
+// IMPORTANT: before doing something to an actor in m_actors, CHECK IF THEY'RE DEAD
+// and do nothing if they are.
+
 void StudentWorld::addActor(Actor *a) {
     m_actors.push_back(a);
 }
 
+//// These next three functions return whether or not there is
+//// an actor in the world that fulfills this boolean
+
 // previously looped through m_actors in actor implementation, now moved to here
-bool StudentWorld::hasActorBlockingMovement(double destX, double destY, const Actor *actor) const {
+bool StudentWorld::hasActorBlockingMovement(double destX, double destY, const Actor *blocker) const {
     list<Actor*>::const_iterator it;
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* actor = *it;
         // check if each actor would block actor
-        if ((*it)->blocksMovement(destX, destY, actor))
+        if (!actor->isDead() && actor->blocksMovement(destX, destY, actor))
             return true;
     }
     return false;
 }
 
-bool StudentWorld::hasActorBlockingFlames(double destX, double destY, const Actor *actor) const {
+bool StudentWorld::hasActorBlockingFlames(double destX, double destY, const Actor *blocker) const {
     list <Actor*>::const_iterator it;
 
     for (it = m_actors.begin(); it  != m_actors.end(); it++) {
-        if ((*it)->blocksFlames(destX, destY, actor))
+        Actor* actor = *it;
+        if (!actor->isDead() && actor->blocksFlames(destX, destY, actor))
             return true;
     }
     return false;
 }
 
-// check if actors are overlapping with a certain actor, and a secondary condition if applicable
+// check if actors are overlapping with a certain actor
 bool StudentWorld::actorTriggersLandmine(const Actor *checker) const {
     list<Actor*>::const_iterator it;
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (actor->overlaps(checker) && actor->triggersLandmines())
+        if (!actor->isDead() && actor->overlaps(checker) && actor->triggersLandmines())
             return true;
     }
     return false;
@@ -220,7 +239,7 @@ void StudentWorld::killActorsInPits(const Actor *killer) {
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (actor->overlaps(killer) && actor->fallsIntoPits())
+        if (!actor->isDead() && actor->overlaps(killer) && actor->fallsIntoPits())
             actor->setDead();
     }
 }
@@ -231,20 +250,17 @@ void StudentWorld::killBurnedActors(const Actor *killer) {
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (actor->overlaps(killer) && actor->damagedByFlame())
+        if (!actor->isDead() && actor->overlaps(killer) && actor->damagedByFlame())
             actor->setDead();
     }
 }
-
-////////////
-////////////
 
 void StudentWorld::infectOverlappingActors(const Actor* killer) {
     list<Actor*>::iterator it;
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (actor->overlaps(killer))
+        if (!actor->isDead() && actor->overlaps(killer))
             actor->infect();
     }
 }
