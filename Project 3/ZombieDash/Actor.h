@@ -26,6 +26,7 @@ public:
     bool flameBlocked(double destX, double destY) const;
     bool isDead() const;
     bool overlaps(const Actor* actor) const;
+    bool wouldOverlap(double destX, double destY, const Actor* other) const;
     bool isInfected() const;
     int infectionCount() const;
     StudentWorld* getWorld() const;
@@ -280,12 +281,13 @@ public:
 
     // Accessors
     virtual bool damagedByFlame() const;
-    bool isActive() const;
 
     // Mutators
     virtual void doSomething();
+    virtual void setDead();
 
 private:
+    bool m_active;
     int m_safetyTicks;
 };
 

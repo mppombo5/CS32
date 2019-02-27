@@ -24,9 +24,8 @@ public:
     void addActor(Actor* a);
     void decCitsLeft();
     void setFinished();
-      // secondaryCondition is the condition that must be true to kill the actors
-      // e.g. damagedByFlame, fallsIntoPits
-    void killOverlappingActors(const Actor* killer, bool targetActorsCondition);
+    void killActorsInPits(const Actor* killer);
+    void killBurnedActors(const Actor* killer);
     void infectOverlappingActors(const Actor* killer);
 
     // Accessors
@@ -34,7 +33,7 @@ public:
     int citsLeft() const;
     bool hasActorBlockingMovement(double destX, double destY, const Actor *actor) const;
     bool hasActorBlockingFlames(double destX, double destY, const Actor* actor) const;
-    bool hasOverlappingActor(const Actor* checker, bool secondaryCondition) const;
+    bool actorTriggersLandmine(const Actor* checker) const;
 
 private:
     // I chose a list because it automatically removes any deleted objects instead of having to step over deleted ones.

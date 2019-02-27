@@ -14,6 +14,14 @@ bool containedIn(double num, double lower, double upper) {
     return (lower <= num && num <= upper);
 }
 
+// checks whether two coordinates are within radius 10 of each other
+bool intrudesRadius10(double firstX, double firstY, double secondX, double secondY) {
+    double dX = secondX - firstX;
+    double dY = secondY - firstY;
+
+    return (dX * dX) + (dY * dY) <= 100;
+}
+
 bool intersectsBoundingBox(double destX, double destY, const Actor* otherActor) {
     // lower corners: destX,destY; otherX,otherY
 
@@ -88,11 +96,18 @@ bool Actor::overlaps(const Actor* other) const {
     double otherXC = other->getX() + (static_cast<double>(SPRITE_WIDTH)/2);
     double otherYC = other->getY() + (static_cast<double>(SPRITE_HEIGHT)/2);
 
-    // "dX" means delta(X)
-    double dX = otherXC - srcXC;
-    double dY = otherYC - srcYC;
+    return intrudesRadius10(srcXC, srcYC, otherXC, otherYC);
+}
 
-    return (dX * dX) + (dY * dY) <= 100;
+// this is specifically different than overlaps because it's checking whether or not an actor
+// WOULD overlap this actor if this actor were to move to destX,destY.
+bool Actor::wouldOverlap(double destX, double destY, const Actor *other) const {
+    double XC = destX + static_cast<double>(SPRITE_WIDTH)/2;
+    double YC = destY + static_cast<double>(SPRITE_HEIGHT)/2;
+    double otherXC = other->getX() + static_cast<double>(SPRITE_WIDTH)/2;
+    double otherYC = other->getY() + static_cast<double>(SPRITE_HEIGHT)/2;
+
+    return intrudesRadius10(XC, YC, otherXC, otherYC);
 }
 
 bool Actor::isInfected() const {
@@ -253,6 +268,10 @@ void Penelope::doSomething() {
                 safeMoveTo(destX, destY);
                 break;
             }
+            case KEY_PRESS_TAB: {
+                getWorld()->addActor(new Landmine(getX(), getY(), getWorld()));
+                break;
+            }
             default:
                 break;
         }
@@ -342,11 +361,11 @@ Wall::Wall(double startX, double startY, StudentWorld* world)
 /// Accessors ///
 
 bool Wall::blocksFlames(double destX, double destY, const Actor* actor) const {
-    return true;
+    return wouldOverlap(destX, destY, this);
 }
 
 bool Wall::blocksMovement(double destX, double destY, const Actor *actor) const {
-    return (intersectsBoundingBox(destX, destY, this));
+    return intersectsBoundingBox(destX, destY, this);
 }
 
 /// Mutators ///
@@ -410,7 +429,7 @@ void Exit::doSomething() {
 void Exit::setDead() {}
 
 bool Exit::blocksFlames(double destX, double destY, const Actor* actor) const {
-    return true;
+    return wouldOverlap(destX, destY, this);
 }
 
 
@@ -434,7 +453,7 @@ void Pit::doSomething() {
         player->setDead();
     }
 
-    getWorld()->killOverlappingActors(this, fallsIntoPits());
+    getWorld()->killActorsInPits(this);
 
     // just here in case killOverlappingActors doesn't work
     /*list<Actor*> actors = getWorld()->getActors();
@@ -475,7 +494,7 @@ void Flame::doSomething() {
         return;
     }
 
-    getWorld()->killOverlappingActors(this, damagedByFlame());
+    getWorld()->killBurnedActors(this);
 }
 
 
@@ -517,6 +536,7 @@ void Vomit::doSomething() {
 
 Landmine::Landmine(double startX, double startY, StudentWorld *world)
 : EnvironmentalActor(IID_LANDMINE, startX, startY, right, 1, world) {
+    m_active = false;
     m_safetyTicks = 30;
 }
 
@@ -526,24 +546,45 @@ bool Landmine::damagedByFlame() const {
     return true;
 }
 
-bool Landmine::isActive() const {
-    return m_safetyTicks <= 0;
-}
-
 /// Mutators ///
+
+void Landmine::setDead() {
+    EnvironmentalActor::setDead();
+    getWorld()->playSound(SOUND_LANDMINE_EXPLODE);
+
+    // nested for loops to add flames in a 3x3 pattern
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            // go from -1 to 1, so that would be -1 + i or j
+            int multX = -1 + i;
+            int multY = -1 + j;
+            double destX = getX() + (SPRITE_WIDTH * multX);
+            double destY = getY() + (SPRITE_HEIGHT * multY);
+            if (!flameBlocked(destX, destY))
+                getWorld()->addActor(new Flame(destX, destY, right, getWorld()));
+            else
+                cerr << "An actor is blocking the creation of a flame!" << endl;
+        }
+    }
+    getWorld()->addActor(new Pit(getX(), getY(), getWorld()));
+}
 
 void Landmine::doSomething() {
     if (isDead())
         return;
 
-    if (!isActive()) {
+    if (!m_active) {
         m_safetyTicks--;
+        if (m_safetyTicks <= 0) {
+            m_active = true;
+            cerr << "A landmine has been activated!" << endl;
+        }
         return;
     }
 
-    if (getWorld()->hasOverlappingActor(this, triggersLandmines())) {
+    if (m_active && (getWorld()->actorTriggersLandmine(this) || getWorld()->getPlayer()->overlaps(this))) {
         setDead();
-        getWorld()->playSound(SOUND_LANDMINE_EXPLODE);
+        /*getWorld()->playSound(SOUND_LANDMINE_EXPLODE);
 
         // nested for loops to add flames in a 3x3 pattern
         for (int i = 0; i < 3; i++) {
@@ -557,7 +598,7 @@ void Landmine::doSomething() {
                     getWorld()->addActor(new Flame(destX, destY, right, getWorld()));
             }
         }
-        getWorld()->addActor(new Pit(getX(), getY(), getWorld()));
+        getWorld()->addActor(new Pit(getX(), getY(), getWorld()));*/
     }
 }
 

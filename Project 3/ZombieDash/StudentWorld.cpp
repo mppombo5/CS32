@@ -199,26 +199,45 @@ bool StudentWorld::hasActorBlockingFlames(double destX, double destY, const Acto
 }
 
 // check if actors are overlapping with a certain actor, and a secondary condition if applicable
-bool StudentWorld::hasOverlappingActor(const Actor* checker, bool secondaryCondition) const {
+bool StudentWorld::actorTriggersLandmine(const Actor *checker) const {
     list<Actor*>::const_iterator it;
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
-        if ((*it)->overlaps(checker) && secondaryCondition)
+        Actor* actor = *it;
+        if (actor->overlaps(checker) && actor->triggersLandmines())
             return true;
     }
     return false;
 }
 
-// targetActors condition is specifically to determine whether the target is flammable or falling in a pit
-void StudentWorld::killOverlappingActors(const Actor *killer, bool targetActorsCondition) {
+
+//// The following two functions kill actors overlapping with flames and pits,
+//// to be called by the respective actors in their doSomething() methods
+
+// first overlap check for actors falling in pits
+void StudentWorld::killActorsInPits(const Actor *killer) {
     list<Actor*>::iterator it;
 
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (actor->overlaps(killer) && targetActorsCondition)
+        if (actor->overlaps(killer) && actor->fallsIntoPits())
             actor->setDead();
     }
 }
+
+// next overlap check for actors touching flames
+void StudentWorld::killBurnedActors(const Actor *killer) {
+    list<Actor*>::iterator it;
+
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* actor = *it;
+        if (actor->overlaps(killer) && actor->damagedByFlame())
+            actor->setDead();
+    }
+}
+
+////////////
+////////////
 
 void StudentWorld::infectOverlappingActors(const Actor* killer) {
     list<Actor*>::iterator it;
