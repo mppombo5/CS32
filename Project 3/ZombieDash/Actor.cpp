@@ -127,6 +127,11 @@ void Actor::setm_infected() {
     m_infected = true;
 }
 
+void Actor::cureInfection() {
+    m_infectionCount = 0;
+    m_infected = false;
+}
+
 ////////////////////////////////////
 /// SentientActor Implementation ///
 ////////////////////////////////////
@@ -299,6 +304,12 @@ void Penelope::doSomething() {
                             break;
                     }
                 }
+                break;
+            }
+            // vaccine: use a vaccine and cure the user
+            case KEY_PRESS_ENTER: {
+                cureInfection();
+                m_vaccines--;
                 break;
             }
             // landmine: spawn a landmine where the player is standing

@@ -51,7 +51,7 @@ protected:
       // setDead() will be different for sentient and environmental actors, but I still need a way to set m_dead to false
     void setm_dead();
     void setm_infected();
-      // only actors should set whether or not they're being examined.
+    void cureInfection();
 
 private:
     StudentWorld* m_world;
