@@ -31,8 +31,9 @@ public:
     // Accessors
     Penelope* getPlayer() const;
     int citsLeft() const;
-    bool hasActorBlockingMovement(double destX, double destY, const Actor *blocker) const;
-    bool hasActorBlockingFlames(double destX, double destY, const Actor* blocker) const;
+    bool hasActorBlockingMovement(double destX, double destY) const;
+    bool hasActorBlockingFlames(double destX, double destY) const;
+    bool actorWouldGetPukedOn(double destX, double destY) const;
     bool actorTriggersLandmine(const Actor* checker) const;
 
 private:
@@ -46,6 +47,8 @@ private:
 
     // whether or not the level should be marked as finished
     bool m_levelFinished;
+    // this is a debug counter so I can have events happen at specific times, mostly to check
+    // actor interaction when spawning in the same location
     int m_debugTicks;
 };
 

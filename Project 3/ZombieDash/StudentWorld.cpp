@@ -63,9 +63,11 @@ int StudentWorld::init()
                         break;
                     case Level::smart_zombie:
                         cout << "Smart zombie at " << i << "," << k << endl;
+                        m_actors.push_back(new SmartZombie(startX, startY, this));
                         break;
                     case Level::dumb_zombie:
                         cout << "Dumb zombie at " << i << "," << k << endl;
+                        m_actors.push_back(new DumbZombie(startX, startY, this));
                         break;
                     case Level::player:
                         cout << "Penelope starts at " << i << "," << k << endl;
@@ -112,16 +114,6 @@ int StudentWorld::init()
 // NOTE: to check which one to remove, just set it to dead
 int StudentWorld::move()
 {
-    m_debugTicks++;
-    if (m_debugTicks == 60)
-        cerr << "Flames about to be spawned on top of each other!" << endl;
-    if (m_debugTicks == 100) {
-        double x = 5*16;
-        for (int i = 0; i < 2; i++)
-            addActor(new Flame(x, x, 1, this));
-        addActor(new Pit(x, x, this));
-        addActor(new Landmine(x, x, this));
-    }
     m_player->doSomething();
     list<Actor*>::iterator it;
     // have each actor do something and check if the player died
@@ -194,9 +186,11 @@ void StudentWorld::addActor(Actor *a) {
 //// an actor in the world that fulfills this boolean
 
 // previously looped through m_actors in actor implementation, now moved to here
-bool StudentWorld::hasActorBlockingMovement(double destX, double destY, const Actor *blocker) const {
-    list<Actor*>::const_iterator it;
+bool StudentWorld::hasActorBlockingMovement(double destX, double destY) const {
+    Penelope* player = getPlayer();
+    if (!player->isDead() && player->blocksMovement(destX, destY, player));
 
+    list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         // check if each actor would block actor
@@ -206,7 +200,7 @@ bool StudentWorld::hasActorBlockingMovement(double destX, double destY, const Ac
     return false;
 }
 
-bool StudentWorld::hasActorBlockingFlames(double destX, double destY, const Actor *blocker) const {
+bool StudentWorld::hasActorBlockingFlames(double destX, double destY) const {
     list <Actor*>::const_iterator it;
 
     for (it = m_actors.begin(); it  != m_actors.end(); it++) {
@@ -217,10 +211,28 @@ bool StudentWorld::hasActorBlockingFlames(double destX, double destY, const Acto
     return false;
 }
 
-// check if actors are overlapping with a certain actor
-bool StudentWorld::actorTriggersLandmine(const Actor *checker) const {
-    list<Actor*>::const_iterator it;
+// check if an infectable actor would get attacked with vomit
+bool StudentWorld::actorWouldGetPukedOn(double destX, double destY) const {
+    Penelope* player = getPlayer();
+    if (!player->isDead() && player->wouldOverlap(destX, destY, player->getX(), player->getY()))
+        return true;
 
+    list<Actor*>::const_iterator it;
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* actor = *it;
+        if (!actor->isDead() && actor->isInfectable() && actor->wouldOverlap(destX, destY, actor->getX(), actor->getY()))
+            return true;
+    }
+    return false;
+}
+
+// check if actors are overlapping with a landmine
+bool StudentWorld::actorTriggersLandmine(const Actor *checker) const {
+    Penelope* player = getPlayer();
+    if (!player->isDead() && player->overlaps(checker))
+        return true;
+
+    list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         if (!actor->isDead() && actor->overlaps(checker) && actor->triggersLandmines())
@@ -233,10 +245,13 @@ bool StudentWorld::actorTriggersLandmine(const Actor *checker) const {
 //// The following two functions kill actors overlapping with flames and pits,
 //// to be called by the respective actors in their doSomething() methods
 
-// first overlap check for actors falling in pits
+// check if actors are overlapping with a pit, and kill them if they are
 void StudentWorld::killActorsInPits(const Actor *killer) {
-    list<Actor*>::iterator it;
+    Penelope* player = getPlayer();
+    if (!player->isDead() && player->overlaps(killer))
+        player->setDead();
 
+    list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         if (!actor->isDead() && actor->overlaps(killer) && actor->fallsIntoPits())
@@ -246,8 +261,11 @@ void StudentWorld::killActorsInPits(const Actor *killer) {
 
 // next overlap check for actors touching flames
 void StudentWorld::killBurnedActors(const Actor *killer) {
-    list<Actor*>::iterator it;
+    Penelope* player = getPlayer();
+    if (!player->isDead() && player->overlaps(killer) && player->damagedByFlame())
+        player->setDead();
 
+    list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         if (!actor->isDead() && actor->overlaps(killer) && actor->damagedByFlame())
@@ -256,8 +274,11 @@ void StudentWorld::killBurnedActors(const Actor *killer) {
 }
 
 void StudentWorld::infectOverlappingActors(const Actor* killer) {
-    list<Actor*>::iterator it;
+    Penelope* player = getPlayer();
+    if (!player->isDead() && player->overlaps(killer))
+        player->infect();
 
+    list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         if (!actor->isDead() && actor->overlaps(killer))

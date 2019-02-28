@@ -81,33 +81,21 @@ bool Actor::isDead() const {
 // "blocked" checks whether or not the actor *is movementBlocked* by any of StudentWorld's actors
 // "blocks" means it blocksMovement the movement of an actor to a destination
 bool Actor::movementBlocked(double destX, double destY) const {
-    return getWorld()->hasActorBlockingMovement(destX, destY, this);
+    return getWorld()->hasActorBlockingMovement(destX, destY);
 }
 
 bool Actor::flameBlocked(double destX, double destY) const {
-    return getWorld()->hasActorBlockingFlames(destX, destY, this);
+    return getWorld()->hasActorBlockingFlames(destX, destY);
 }
 
 bool Actor::overlaps(const Actor* other) const {
-    // "XC" and "YC" mean "XCenter" and "YCenter"
-    // static cast to double in order to avoid integer division (maybe redundant, maybe not)
-    double srcXC = getX() + (static_cast<double>(SPRITE_WIDTH)/2);
-    double srcYC = getY() + (static_cast<double>(SPRITE_HEIGHT)/2);
-    double otherXC = other->getX() + (static_cast<double>(SPRITE_WIDTH)/2);
-    double otherYC = other->getY() + (static_cast<double>(SPRITE_HEIGHT)/2);
-
-    return intrudesRadius10(srcXC, srcYC, otherXC, otherYC);
+    return intrudesRadius10(getX(), getY(), other->getX(), other->getY());
 }
 
 // this is specifically different than overlaps because it's checking whether or not an actor
 // WOULD overlap this actor if this actor were to move to destX,destY.
-bool Actor::wouldOverlap(double destX, double destY, const Actor *other) const {
-    double XC = destX + static_cast<double>(SPRITE_WIDTH)/2;
-    double YC = destY + static_cast<double>(SPRITE_HEIGHT)/2;
-    double otherXC = other->getX() + static_cast<double>(SPRITE_WIDTH)/2;
-    double otherYC = other->getY() + static_cast<double>(SPRITE_HEIGHT)/2;
-
-    return intrudesRadius10(XC, YC, otherXC, otherYC);
+bool Actor::wouldOverlap(double destX, double destY, double actorX, double actorY) const {
+    return intrudesRadius10(destX, destY, actorX, actorY);
 }
 
 bool Actor::isInfected() const {
@@ -192,6 +180,10 @@ bool SentientActor::blocksMovement(double destX, double destY, const Actor *acto
     return intersectsBoundingBox(destX, destY, this);
 }
 
+bool SentientActor::isInfectable() const {
+    return true;
+}
+
 ///////////////////////////////
 /// Penelope Implementation ///
 ///////////////////////////////
@@ -220,6 +212,11 @@ int Penelope::getFlames() const {
 }
 
 /// Mutators ///
+
+void Penelope::setDead() {
+    SentientActor::setDead();
+    getWorld()->playSound(SOUND_PLAYER_DIE);
+}
 
 void Penelope::doSomething() {
     // check if she's dead
@@ -333,15 +330,91 @@ void Penelope::addLandmines() {
 
 /// Constructor/Destructor ///
 
+Zombie::Zombie(double startX, double startY, StudentWorld *world)
+: SentientActor(IID_ZOMBIE, startX, startY, right, 0, world) {
+    m_mvtPlanDist = 0;
+    m_paralyzed = false;
+}
+
 /// Accessors ///
 
 bool Zombie::exits(const Actor *actor) const {
     return false;
 }
 
+bool Zombie::isInfectable() const {
+    return false;
+}
+
 /// Mutators ///
 
-// some function here
+void Zombie::doSomething() {
+    if (isDead())
+        return;
+
+    // don't do anything if it's paralyzed
+    if (m_paralyzed) {
+        m_paralyzed = false;
+        return;
+    }
+
+    // compute vomit coordinates in the direction it's facing
+    int multX = 0;
+    int multY = 0;
+    switch (getDirection()) {
+        case up:
+            multY = 1;
+            break;
+        case down:
+            multY = -1;
+            break;
+        case right:
+            multX = 1;
+            break;
+        case left:
+            multX = -1;
+            break;
+        default: break;
+    }
+    // set vomit destinations (vDest) for x and y
+    double vDestX = getX() + (multX * SPRITE_WIDTH);
+    double vDestY = getY() + (multY * SPRITE_HEIGHT);
+    if (getWorld()->actorWouldGetPukedOn(vDestX, vDestY)) {
+        // randInt to determine 1/3 chance that vomit is spawned
+        if (randInt(1, 3) == 1) {
+            getWorld()->addActor(new Vomit(vDestX, vDestY, getDirection(), getWorld()));
+            getWorld()->playSound(SOUND_ZOMBIE_VOMIT);
+            return;
+        }
+    }
+
+    // this goes at the end to switch its paralyzed state
+    m_paralyzed = true;
+}
+
+
+
+////////////////////////////////////////
+/// Dumb/Smart Zombie Implementation ///
+////////////////////////////////////////
+
+DumbZombie::DumbZombie(double startX, double startY, StudentWorld *world)
+: Zombie(startX, startY, world) {
+
+}
+
+SmartZombie::SmartZombie(double startX, double startY, StudentWorld *world)
+: Zombie(startX, startY, world) {
+
+}
+
+void DumbZombie::zombieMovement() {
+
+}
+
+void SmartZombie::zombieMovement() {
+
+}
 
 
 
@@ -375,6 +448,10 @@ bool EnvironmentalActor::blocksMovement(double destX, double destY, const Actor 
     return false;
 }
 
+bool EnvironmentalActor::isInfectable() const {
+    return false;
+}
+
 /// Mutators ///
 
 void EnvironmentalActor::setDead() {
@@ -396,7 +473,7 @@ Wall::Wall(double startX, double startY, StudentWorld* world)
 /// Accessors ///
 
 bool Wall::blocksFlames(double destX, double destY, const Actor* actor) const {
-    return wouldOverlap(destX, destY, this);
+    return wouldOverlap(destX, destY, getX(), getY());
 }
 
 bool Wall::blocksMovement(double destX, double destY, const Actor *actor) const {
@@ -464,7 +541,7 @@ void Exit::doSomething() {
 void Exit::setDead() {}
 
 bool Exit::blocksFlames(double destX, double destY, const Actor* actor) const {
-    return wouldOverlap(destX, destY, this);
+    return wouldOverlap(destX, destY, getX(), getY());
 }
 
 
@@ -489,21 +566,7 @@ bool Pit::damagedByFlame() const {
 /// Mutators ///
 
 void Pit::doSomething() {
-    Penelope* player = getWorld()->getPlayer();
-    if (player->overlaps(this)) {
-        player->setDead();
-    }
-
     getWorld()->killActorsInPits(this);
-
-    // just here in case killOverlappingActors doesn't work
-    /*list<Actor*> actors = getWorld()->getActors();
-    list<Actor*>::iterator it;
-    for (it = actors.begin(); it != actors.end(); it++) {
-        Actor* actor = *it;
-        if (actor->overlaps(this) && actor->fallsIntoPits())
-            actor->setDead();
-    }*/
 }
 
 // pits should never be dead
@@ -623,23 +686,8 @@ void Landmine::doSomething() {
         return;
     }
 
-    if (m_active && (getWorld()->actorTriggersLandmine(this) || getWorld()->getPlayer()->overlaps(this))) {
+    if (m_active && getWorld()->actorTriggersLandmine(this)) {
         setDead();
-        /*getWorld()->playSound(SOUND_LANDMINE_EXPLODE);
-
-        // nested for loops to add flames in a 3x3 pattern
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                // go from -1 to 1, so that would be -1 + i or j
-                int multX = -1 + i;
-                int multY = -1 + j;
-                double destX = getX() + (SPRITE_WIDTH * multX);
-                double destY = getY() + (SPRITE_HEIGHT * multY);
-                if (!flameBlocked(destX, destY))
-                    getWorld()->addActor(new Flame(destX, destY, right, getWorld()));
-            }
-        }
-        getWorld()->addActor(new Pit(getX(), getY(), getWorld()));*/
     }
 }
 

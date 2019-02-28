@@ -19,6 +19,7 @@ public:
     virtual bool blocksMovement(double destX, double destY, const Actor *actor) const = 0;
     virtual bool damagedByFlame() const = 0;
     virtual bool triggersLandmines() const = 0;
+    virtual bool isInfectable() const = 0;
     virtual bool exits(const Actor* actor) const;
     virtual bool detectsExits() const;
     virtual bool blocksFlames(double destX, double destY, const Actor* actor) const;
@@ -26,7 +27,7 @@ public:
     bool flameBlocked(double destX, double destY) const;
     bool isDead() const;
     bool overlaps(const Actor* actor) const;
-    bool wouldOverlap(double destX, double destY, const Actor* other) const;
+    bool wouldOverlap(double destX, double destY, double actorX, double actorY) const;
     bool isInfected() const;
     int infectionCount() const;
     StudentWorld* getWorld() const;
@@ -73,6 +74,8 @@ public:
     virtual bool fallsIntoPits() const;
     virtual bool damagedByFlame() const;
     virtual bool triggersLandmines() const;
+    virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
+    virtual bool isInfectable() const;
 
     // Mutators
     virtual void setDead();
@@ -80,7 +83,6 @@ public:
 
 protected:
     // Accessors
-    virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
 
     // Mutators
 
@@ -103,6 +105,7 @@ public:
 
     // Mutators
     virtual void doSomething();
+    virtual void setDead();
     void addVaccine();
     void addFlames();
     void addLandmines();
@@ -121,14 +124,41 @@ private:
 class Zombie: public SentientActor {
 public:
     // Constructor/Destructor
+    Zombie(double startX, double startY, StudentWorld* world);
 
     // Accessors
     virtual bool exits(const Actor* actor) const;
+    virtual bool isInfectable() const;
 
     // Mutators
+    virtual void doSomething();
+    virtual void zombieMovement() = 0;
 
 private:
+    bool m_paralyzed;
+    int m_mvtPlanDist;
+};
 
+/// Dumb Zombie ///
+
+class DumbZombie: public Zombie {
+public:
+    // Constructor
+    DumbZombie(double startX, double startY, StudentWorld* world);
+
+    // Mutator
+    virtual void zombieMovement();
+};
+
+/// Smart Zombie ///
+
+class SmartZombie: public Zombie {
+public:
+    // Constructor
+    SmartZombie(double startX, double startY, StudentWorld* world);
+
+    // Mutator
+    virtual void zombieMovement();
 };
 
 
@@ -147,6 +177,7 @@ public:
     virtual bool fallsIntoPits() const;
     virtual bool damagedByFlame() const;
     virtual bool triggersLandmines() const;
+    virtual bool isInfectable() const;
 
     // Mutators
     virtual void setDead();
