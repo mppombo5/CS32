@@ -10,6 +10,7 @@
 class Actor;
 class Human;
 class Penelope;
+class Citizen;
 class Zombie;
 
 class StudentWorld: public GameWorld
@@ -33,6 +34,7 @@ public:
     // Accessors
     Penelope* getPlayer() const;
     Human* getClosestPersonToZombie(const Zombie* zombie) const;
+    Zombie* getClosestZombieToCitizen(const Citizen* citizen) const;
     int citsLeft() const;
       // always pass in "this" to hasActorBlockingMovement, so it won't compare against itself
     bool hasActorBlockingMovement(double destX, double destY, const Actor* checker) const;

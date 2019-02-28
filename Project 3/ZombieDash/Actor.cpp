@@ -67,6 +67,10 @@ bool Actor::detectsExits() const {
     return false;
 }
 
+bool Actor::isZombie() const {
+    return false;
+}
+
 bool Actor::blocksFlames(double destX, double destY, const Actor *actor) const {
     return false;
 }
@@ -237,6 +241,18 @@ void Penelope::safeMoveTo(double destX, double destY) {
         moveTo(destX, destY);
 }
 
+void Penelope::addVaccine() {
+    m_vaccines++;
+}
+
+void Penelope::addFlames() {
+    m_flames += 5;
+}
+
+void Penelope::addLandmines() {
+    m_landmines += 2;
+}
+
 void Penelope::doSomething() {
     // check if she's dead
     if (isDead())
@@ -321,8 +337,10 @@ void Penelope::doSomething() {
             }
             // vaccine: use a vaccine and cure the user
             case KEY_PRESS_ENTER: {
-                cureInfection();
-                m_vaccines--;
+                if (m_vaccines > 0) {
+                    cureInfection();
+                    m_vaccines--;
+                }
                 break;
             }
             // landmine: spawn a landmine where the player is standing
@@ -336,16 +354,152 @@ void Penelope::doSomething() {
     }
 }
 
-void Penelope::addVaccine() {
-    m_vaccines++;
+
+
+//////////////////////////////
+/// Citizen Implementation ///
+//////////////////////////////
+
+Citizen::Citizen(double startX, double startY, StudentWorld *world)
+: Human(IID_CITIZEN, startX, startY, right, 0, world) {
+    m_paralyzed = false;
 }
 
-void Penelope::addFlames() {
-    m_flames += 5;
+void Citizen::infect() {
+    if (!isInfected())
+        getWorld()->playSound(SOUND_CITIZEN_INFECTED);
+    Human::infect();
 }
 
-void Penelope::addLandmines() {
-    m_landmines += 2;
+void Citizen::setDead() {
+    getWorld()->playSound(SOUND_CITIZEN_DIE);
+    SentientActor::setDead();
+}
+
+void Citizen::paralyze() {
+    m_paralyzed = true;
+}
+
+void Citizen::doSomething() {
+    if (isDead())
+        return;
+
+    // check and respond for infection
+    if (isInfected()) {
+        increaseInfection();
+        if (infectionCount() >= 500) {
+            setDead();
+            getWorld()->decCitsLeft();
+            getWorld()->playSound(SOUND_ZOMBIE_BORN);
+            getWorld()->increaseScore(-1000);
+            int X = randInt(1, 10);
+            if (X <= 7)
+                getWorld()->addActor(new DumbZombie(getX(), getY(), getWorld()));
+            else
+                getWorld()->addActor(new SmartZombie(getX(), getY(), getWorld()));
+            return;
+        }
+    }
+
+    // paralysis check
+    if (m_paralyzed) {
+        m_paralyzed = false;
+        return;
+    }
+
+    Penelope* p = getWorld()->getPlayer();
+    double distP = squareDistBetween(getWorld()->getPlayer());
+    Zombie* z = getWorld()->getClosestZombieToCitizen(this);
+    // distZ gets -1 if there are no zombies in the world
+    double distZ = (z == nullptr ? -1 : squareDistBetween(z));
+
+    // if the player is the closest entity and <= 80 pixels away, move the citizen closer
+    if ((distP < distZ || distZ == -1) && distP <= (80 * 80)) {
+        // citizen is on the same column as Penelope
+        if (containedIn(getX(), p->getX()-10, p->getX()+10)) {
+            double destX = getX();
+            double destY = getY() + (getY() > p->getY() ? -2 : 2);
+            if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                    && !getWorld()->playerBlocksMovement(destX, destY)) {
+                setDirection(destX > getX() ? down : up);
+                moveTo(destX, destY);
+                paralyze();
+                return;
+            }
+        }
+        // citizen is on the same row as Penelope
+        else if (containedIn(getY(), p->getY()-10, p->getY()+10)) {
+            double destX = getX() + (getX() > p->getX() ? -2 : 2);
+            double destY = getY();
+            if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                    && !getWorld()->playerBlocksMovement(destX, destY)) {
+                setDirection(destX > getX() ? right : left);
+                moveTo(destX, destY);
+                paralyze();
+                return;
+            }
+        }
+        // citizen is not exactly in the row/column, so just move it closer
+        else {
+            int X = randInt(1, 2);
+            switch (X) {
+                case 1: {
+                    double destX = getX() + (getX() > p->getX() ? -2 : 2);
+                    double destY = getY();
+                    if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                        && !getWorld()->playerBlocksMovement(destX, destY)) {
+                        setDirection(destX > getX() ? right : left);
+                        moveTo(destX, destY);
+                        paralyze();
+                        return;
+                    }
+                    // if at this point the function has not returned, try going in the y direction
+                    destX = getX();
+                    destY = getY() + (getY() > p->getY() ? -2 : 2);
+                    if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                            && !getWorld()->playerBlocksMovement(destX, destY)) {
+                        setDirection(destY > getY() ? up : down);
+                        moveTo(destX, destY);
+                        paralyze();
+                        return;
+                    }
+                }
+                    break;
+                case 2: {
+                    double destX = getX();
+                    double destY = getY() + (getY() > p->getY() ? -2 : 2);
+                    if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                            && !getWorld()->playerBlocksMovement(destX, destY)) {
+                        setDirection(destY > getY() ? up : down);
+                        moveTo(destX, destY);
+                        paralyze();
+                        return;
+                    }
+                    // same thing: if it hasn't returned, try the x direction
+                    destX = getX() + (getX() > p->getX() ? -2 : 2);
+                    destY = getY();
+                    if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                            && !getWorld()->playerBlocksMovement(destX, destY)) {
+                        setDirection(destX > getX() ? right : left);
+                        moveTo(destX, destY);
+                        paralyze();
+                        return;
+                    }
+                }
+                    break;
+                default: break;
+            }
+        }
+    }
+
+    // we don't need an else if, because if nothing above returned out then
+    // we continue onto whether there's a zombie within 80 pixels
+    
+
+
+
+    // this goes at the end to switch its paralyzed state
+    m_paralyzed = true;
 }
 
 
@@ -370,6 +524,10 @@ bool Zombie::exits(const Actor *actor) const {
 
 bool Zombie::isInfectible() const {
     return false;
+}
+
+bool Zombie::isZombie() const {
+    return true;
 }
 
 int Zombie::mvtPlan() const {
@@ -599,6 +757,7 @@ void SmartZombie::determineNextDir() {
                         return;
                     case 2:
                         setDirection(getY() > closest->getY() ? down : up);
+                        return;
                     default: return;
                 }
             }
@@ -856,8 +1015,6 @@ void Landmine::setDead() {
             double destY = getY() + (SPRITE_HEIGHT * multY);
             if (!flameBlocked(destX, destY))
                 getWorld()->addActor(new Flame(destX, destY, up, getWorld()));
-            else
-                cerr << "An actor is blocking the creation of a flame!" << endl;
         }
     }
     getWorld()->addActor(new Pit(getX(), getY(), getWorld()));
@@ -871,7 +1028,6 @@ void Landmine::doSomething() {
         m_safetyTicks--;
         if (m_safetyTicks <= 0) {
             m_active = true;
-            cerr << "A landmine has been activated!" << endl;
         }
         return;
     }

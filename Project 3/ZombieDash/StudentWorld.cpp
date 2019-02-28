@@ -32,19 +32,15 @@ int StudentWorld::init()
 
     // couldn't find level file, so we assume they won
     if (levelResult == Level::load_fail_file_not_found || getLevel() > 99) {
-        cerr << "Cannot find level file " << levelFile << "." << endl;
         return GWSTATUS_PLAYER_WON;
     }
     // level file was improperly formatted
     else if (levelResult == Level::load_fail_bad_format) {
-        cerr << "Your level was improperly formatted." << endl;
         return GWSTATUS_LEVEL_ERROR;
     }
 
-    // level was loaded successfully, so we can go about our day
     else if (levelResult == Level::load_success) {
-        cerr << "Successfully loaded level." << endl;
-
+        // level was loaded successfully, so we can go about our day
         m_citsLeft = 0;
         m_levelFinished = false;
         m_debugTicks = 0;
@@ -58,7 +54,6 @@ int StudentWorld::init()
 
                 const Level::MazeEntry& objectAtCoords = level.getContentsOf(i, k);
                 switch (objectAtCoords) {
-                    // TODO: add each actor to m_actors according to its space (constructor coordinates)
                     case Level::empty:
                         break;
                     case Level::smart_zombie:
@@ -74,6 +69,7 @@ int StudentWorld::init()
                         m_actors.push_back(new Exit(startX, startY, this));
                         break;
                     case Level::citizen:
+                        m_actors.push_back(new Citizen(startX, startY, this));
                         m_citsLeft++;
                         break;
                     case Level::wall:
@@ -181,7 +177,7 @@ bool StudentWorld::hasActorBlockingMovement(double destX, double destY, const Ac
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         // check if each actor would block actor
-        if (!actor->isDead() && !(actor == checker) && actor->blocksMovement(destX, destY, actor))
+        if (!actor->isDead() && actor != checker && actor->blocksMovement(destX, destY, actor))
             return true;
     }
     return false;
@@ -294,8 +290,8 @@ void StudentWorld::infectOverlappingActors(const Actor* killer) {
 
 // used in Smart Zombies to get the closest person. Is there a better way to do this? Probably.
 Human* StudentWorld::getClosestPersonToZombie(const Zombie* zombie) const {
-    Actor* closestPerson = m_player;
     // initialize closestDist to the player, and then loop through and see if any citizens are closer
+    Actor* closestPerson = m_player;
     double closestDist = zombie->squareDistBetween(m_player);
 
     list<Actor*>::const_iterator it;
@@ -312,6 +308,38 @@ Human* StudentWorld::getClosestPersonToZombie(const Zombie* zombie) const {
     }
     // we know that closestPerson will be a human, so we need to return as such
     return dynamic_cast<Human*>(closestPerson);
+}
+
+// used in Citizens to get the closest Zombie. basically a copy paste of the above function.
+Zombie* StudentWorld::getClosestZombieToCitizen(const Citizen *citizen) const {
+    // initialize closestZombie to nullptr, check if it's nullptr to see if there are no zombies
+    Actor* closestZombie = nullptr;
+    double closestDist = 0;
+    bool oneFound = false;
+
+    list<Actor*>::const_iterator it;
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* a = *it;
+        if (a->isZombie() && !a->isDead() && a != citizen) {
+            double currentDist = citizen->squareDistBetween(a);
+            // extra case if
+            if (!oneFound) {
+                oneFound = true;
+                closestDist = currentDist;
+                closestZombie = a;
+            }
+            else {
+                if (currentDist < closestDist) {
+                    closestDist = currentDist;
+                    closestZombie = a;
+                }
+            }
+        }
+    }
+    // we know that closestZombie will be a zombie, so we can downcast
+    if (closestZombie != nullptr)
+        return dynamic_cast<Zombie*>(closestZombie);
+    return nullptr;
 }
 
 
