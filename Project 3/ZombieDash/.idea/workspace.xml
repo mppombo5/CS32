@@ -35,11 +35,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Actor.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-538">
-              <caret line="53" column="25" selection-start-line="53" selection-start-column="25" selection-end-line="53" selection-end-column="25" />
+            <state relative-caret-position="280">
+              <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
               <folding>
                 <element signature="e#35#59#0" expanded="true" />
               </folding>
@@ -47,11 +47,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Actor.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="295" column="34" selection-start-line="295" selection-start-column="34" selection-end-line="295" selection-end-column="34" />
+            <state relative-caret-position="270">
+              <caret line="205" column="17" lean-forward="true" selection-start-line="205" selection-start-column="17" selection-end-line="205" selection-end-column="17" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -62,7 +62,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/StudentWorld.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="241">
+            <state relative-caret-position="-83">
               <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
               <folding>
                 <element signature="e#49#71#0" expanded="true" />
@@ -95,6 +95,7 @@
       <find>glutSetOption</find>
       <find>glutLeaveMainLoop</find>
       <find>landmine</find>
+      <find>SOUND_ZOMBIE</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -198,12 +199,12 @@
       <workItem from="1551153277514" duration="24364000" />
       <workItem from="1551243650094" duration="8497000" />
       <workItem from="1551293830568" duration="847000" />
-      <workItem from="1551302269078" duration="16856000" />
+      <workItem from="1551302269078" duration="18913000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="132349000" />
+    <option name="totallyTimeSpent" value="134406000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -390,7 +391,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/StudentWorld.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="241">
+        <state relative-caret-position="-83">
           <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
           <folding>
             <element signature="e#49#71#0" expanded="true" />
@@ -398,22 +399,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Actor.h">
+    <entry file="file://$PROJECT_DIR$/Actor.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-538">
-          <caret line="53" column="25" selection-start-line="53" selection-start-column="25" selection-end-line="53" selection-end-column="25" />
+        <state relative-caret-position="270">
+          <caret line="205" column="17" lean-forward="true" selection-start-line="205" selection-start-column="17" selection-end-line="205" selection-end-column="17" />
           <folding>
-            <element signature="e#35#59#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Actor.cpp">
+    <entry file="file://$PROJECT_DIR$/Actor.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="295" column="34" selection-start-line="295" selection-start-column="34" selection-end-line="295" selection-end-column="34" />
+        <state relative-caret-position="280">
+          <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#35#59#0" expanded="true" />
           </folding>
         </state>
       </provider>

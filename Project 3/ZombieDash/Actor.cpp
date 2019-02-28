@@ -37,10 +37,8 @@ bool intersectsBoundingBox(double destX, double destY, const Actor* otherActor) 
     double otherY     = otherActor->getY();
     double otherYEdge = otherActor->getY() + SPRITE_HEIGHT-1;
 
-    if (  (containedIn(destX, otherX, otherXEdge) || containedIn(destX + SPRITE_WIDTH-1, otherX, otherXEdge))
-       && (containedIn(destY, otherY, otherYEdge) || containedIn(destY + SPRITE_HEIGHT-1, otherY, otherYEdge)))
-        return true;
-    return false;
+    return (  (containedIn(destX, otherX, otherXEdge) || containedIn(destX + SPRITE_WIDTH-1, otherX, otherXEdge))
+           && (containedIn(destY, otherY, otherYEdge) || containedIn(destY + SPRITE_HEIGHT-1, otherY, otherYEdge)));
 }
 
 ////////////////////////////
@@ -54,7 +52,6 @@ Actor::Actor(int imageID, double startX, double startY, Direction startDir, int 
     m_world = world;
     m_dead = false;
     m_infected = false;
-    m_beingExamined = false;
     m_infectionCount = 0;
 }
 
@@ -76,13 +73,6 @@ bool Actor::blocksFlames(double destX, double destY, const Actor *actor) const {
 
 bool Actor::isDead() const {
     return m_dead;
-}
-
-// Important distinction:
-// "blocked" checks whether or not the actor *is movementBlocked* by any of StudentWorld's actors
-// "blocks" means it blocksMovement the movement of an actor to a destination
-bool Actor::movementBlocked(double destX, double destY) const {
-    return getWorld()->hasActorBlockingMovement(destX, destY, this);
 }
 
 bool Actor::flameBlocked(double destX, double destY) const {
@@ -144,12 +134,6 @@ SentientActor::SentientActor(int imageID, double startX, double startY, Directio
 
 /// Accessors ///
 
-bool SentientActor::exits(const Actor* actor) const {
-    if (actor->detectsExits())
-        return overlaps(actor);
-    return false;
-}
-
 bool SentientActor::fallsIntoPits() const {
     return true;
 }
@@ -164,12 +148,6 @@ bool SentientActor::triggersLandmines() const {
 
 /// Mutators ///
 
-// TODO: when zombies are implemented, they shouldn't be infected
-void SentientActor::infect() {
-    if (!isInfected())
-        setm_infected();
-}
-
 void SentientActor::setDead() {
     if (!isDead())
         setm_dead();
@@ -180,9 +158,37 @@ bool SentientActor::blocksMovement(double destX, double destY, const Actor *acto
     return intersectsBoundingBox(destX, destY, this);
 }
 
-bool SentientActor::isInfectible() const {
+//////////////
+/// Humans ///
+//////////////
+
+/// Constructor ///
+
+Human::Human(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld *world)
+: SentientActor(imageID, startX, startY, startDir, depth, world) {
+
+}
+
+/// Accessors ///
+
+bool Human::isInfectible() const {
     return true;
 }
+
+bool Human::exits(const Actor *actor) const {
+    if (actor->detectsExits())
+        return overlaps(actor);
+    return false;
+}
+
+/// Mutators ///
+
+void Human::infect() {
+    if (!isInfected())
+        setm_infected();
+}
+
+
 
 ///////////////////////////////
 /// Penelope Implementation ///
@@ -191,7 +197,7 @@ bool SentientActor::isInfectible() const {
 /// Constructor/Destructor ///
 
 Penelope::Penelope(double startX, double startY, StudentWorld* world)
-        : SentientActor(IID_PLAYER, startX, startY, right, 0, world) {
+        : Human(IID_PLAYER, startX, startY, right, 0, world) {
     m_flames = 0;
     m_landmines = 0;
     m_vaccines = 0;
@@ -470,6 +476,7 @@ void DumbZombie::setDead() {
     SentientActor::setDead();
     getWorld()->playSound(SOUND_ZOMBIE_DIE);
     getWorld()->increaseScore(1000);
+    // attempt to have the zombie throw a vaccine one spot away
     if (randInt(1, 10) == 5) {
         // the zombie was carrying a vaccine, so try and fling it away
         // select a new random direction
@@ -535,10 +542,16 @@ SmartZombie::SmartZombie(double startX, double startY, StudentWorld *world)
 
 void SmartZombie::setDead() {
     SentientActor::setDead();
+    getWorld()->playSound(SOUND_ZOMBIE_DIE);
+    getWorld()->increaseScore(2000);
 }
 
 void SmartZombie::zombieMovement() {
+    // needs a new movement plan
+    if (mvtPlan() <= 0) {
+        newMvtPlan();
 
+    }
 }
 
 

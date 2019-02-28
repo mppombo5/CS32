@@ -23,7 +23,6 @@ public:
     virtual bool exits(const Actor* actor) const;
     virtual bool detectsExits() const;
     virtual bool blocksFlames(double destX, double destY, const Actor* actor) const;
-    bool movementBlocked(double destX, double destY) const;
     bool flameBlocked(double destX, double destY) const;
     bool isDead() const;
     bool overlaps(const Actor* actor) const;
@@ -57,7 +56,6 @@ private:
     StudentWorld* m_world;
     bool m_dead;
     bool m_infected;
-    bool m_beingExamined;
     int m_infectionCount;
 };
 
@@ -74,16 +72,13 @@ public:
     SentientActor(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
 
     // Accessors
-    virtual bool exits(const Actor* actor) const;
     virtual bool fallsIntoPits() const;
     virtual bool damagedByFlame() const;
     virtual bool triggersLandmines() const;
     virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
-    virtual bool isInfectible() const;
 
     // Mutators
     virtual void setDead();
-    virtual void infect();
 
 protected:
     // Accessors
@@ -95,9 +90,29 @@ private:
 
 
 
+/// Human ///
+
+class Human: public SentientActor {
+public:
+    // Constructor
+    Human(int imageID, double startX, double startY, Direction startDir, int depth, StudentWorld* world);
+
+    // Accessors
+    virtual bool isInfectible() const;
+    virtual bool exits(const Actor* actor) const;
+
+    // Mutators
+    virtual void infect();
+
+private:
+
+};
+
+
+
 /// Penelope ///
 
-class Penelope: public SentientActor {
+class Penelope: public Human {
 public:
     // Constructor/Destructor
     Penelope(double startX, double startY, StudentWorld* world);
