@@ -454,7 +454,7 @@ void Citizen::doSomething() {
                     double destX = getX() + (getX() > p->getX() ? -2 : 2);
                     double destY = getY();
                     if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
-                        && !getWorld()->playerBlocksMovement(destX, destY)) {
+                            && !getWorld()->playerBlocksMovement(destX, destY)) {
                         setDirection(destX > getX() ? right : left);
                         moveTo(destX, destY);
                         paralyze();

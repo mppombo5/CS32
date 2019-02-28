@@ -133,7 +133,10 @@ int StudentWorld::move()
     ostringstream oss;
     oss << "Score: ";
     oss.fill('0');
-    oss << setw(6) << getScore() << setw(0) << "  Level: ";
+    if (getScore() >= 0)
+        oss << setw(6) << getScore() << setw(0) << "  Level: ";
+    else
+        oss << "-" << setw(5) << getScore() * -1 << setw(0) << "  Level:";
     oss.fill(' ');
     oss << setw(1) << getLevel() << setw(0) << "  Lives: " << getLives() << "  Vaccines: "
         << setw(1) << m_player->getVaccines() << setw(0) << "  Flames: " << setw(1) << m_player->getFlames()
