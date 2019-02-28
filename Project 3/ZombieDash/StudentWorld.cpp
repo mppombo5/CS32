@@ -292,14 +292,14 @@ void StudentWorld::infectOverlappingActors(const Actor* killer) {
 Human* StudentWorld::getClosestPersonToZombie(const Zombie* zombie) const {
     // initialize closestDist to the player, and then loop through and see if any citizens are closer
     Actor* closestPerson = m_player;
-    double closestDist = zombie->squareDistBetween(m_player);
+    double closestDist = zombie->squareDistBetween(zombie->getX(), zombie->getY(), m_player);
 
     list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         // important to note: only humans are infectible, so this is a reasonable check for humanity
         if (!actor->isDead() && actor != zombie && actor->isInfectible()) {
-            double currentDist = zombie->squareDistBetween(actor);
+            double currentDist = zombie->squareDistBetween(zombie->getX(), zombie->getY(), actor);
             if (currentDist < closestDist) {
                 closestPerson = actor;
                 closestDist = currentDist;
@@ -320,8 +320,8 @@ Zombie* StudentWorld::getClosestZombieToCitizen(const Citizen *citizen) const {
     list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* a = *it;
-        if (a->isZombie() && !a->isDead() && a != citizen) {
-            double currentDist = citizen->squareDistBetween(a);
+        if (a->isZombie() && !a->isDead()) {
+            double currentDist = citizen->squareDistBetween(citizen->getX(), citizen->getY(), a);
             // extra case if
             if (!oneFound) {
                 oneFound = true;

@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "StudentWorld.h"
 #include "GameConstants.h"
+#include <algorithm>
 using namespace std;
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
@@ -101,12 +102,17 @@ int Actor::infectionCount() const {
     return m_infectionCount;
 }
 
-double Actor::squareDistBetween(const Actor *other) const {
-    double dX = getX() - other->getX();
-    double dY = getY() - other->getY();
+double Actor::squareDistBetween(double coordX, double coordY, const Actor *other) const {
+    double dX = coordX - other->getX();
+    double dY = coordY - other->getY();
 
     return (dX * dX) + (dY * dY);
 }
+
+/*double Actor::potentialSquareDistBetween(double destX, double destY, const Actor *other) const {
+    double dX = destX - other->getX();
+    double dY = destY
+}*/
 
 StudentWorld* Actor::getWorld() const {
     return m_world;
@@ -408,10 +414,10 @@ void Citizen::doSomething() {
     }
 
     Penelope* p = getWorld()->getPlayer();
-    double distP = squareDistBetween(getWorld()->getPlayer());
+    double distP = squareDistBetween(getX(), getY(), getWorld()->getPlayer());
     Zombie* z = getWorld()->getClosestZombieToCitizen(this);
     // distZ gets -1 if there are no zombies in the world
-    double distZ = (z == nullptr ? -1 : squareDistBetween(z));
+    double distZ = (z == nullptr ? -1 : squareDistBetween(getX(), getY(), z));
 
     // if the player is the closest entity and <= 80 pixels away, move the citizen closer
     if ((distP < distZ || distZ == -1) && distP <= (80 * 80)) {
@@ -494,12 +500,132 @@ void Citizen::doSomething() {
 
     // we don't need an else if, because if nothing above returned out then
     // we continue onto whether there's a zombie within 80 pixels
-    
+    if (z != nullptr && !z->isDead() && distZ <= (80 * 80)) {
+        // now we need to calculate the potential difference for the citizen moving in each direction
+        // if that direction is blocked, leave the difference at -1
+        double dUp = -1;
+        double dDown = -1;
+        double dRight = -1;
+        double dLeft = -1;
+        double maxDist = distZ;
 
+        double destX;
+        double destY;
 
+        // dUp check
+        destX = getX();
+        destY = getY() + 2;
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            // make a temporary citizen at (destX,destY) and find the nearest zombie to that one
+            Citizen* temp = new Citizen(destX, destY, getWorld());
+            Zombie* closestZ = getWorld()->getClosestZombieToCitizen(temp);
+            dUp = squareDistBetween(destX, destY, closestZ);
+            maxDist = (dUp > maxDist ? dUp : maxDist);
+            // no memory leaks in my town
+            delete temp;
+        }
 
-    // this goes at the end to switch its paralyzed state
-    m_paralyzed = true;
+        // dUp check (old)
+        /*destX = getX();
+        destY = getY() + 2;
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            dUp = squareDistBetween(destX, destY, z);
+            maxDist = (dUp > maxDist ? dUp : maxDist);
+        }*/
+
+        // dDown check
+        destY = getY() - 2;
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            Citizen* temp = new Citizen(destX, destY, getWorld());
+            Zombie* closestZ = getWorld()->getClosestZombieToCitizen(temp);
+            dDown = squareDistBetween(destX, destY, closestZ);
+            maxDist = (dDown > maxDist ? dDown : maxDist);
+            delete temp;
+        }
+
+        // dDown check (old)
+        /*destY = getY() - 2;
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            dDown = squareDistBetween(destX, destY, z);
+            maxDist = (dDown > maxDist ? dDown : maxDist);
+        }*/
+
+        // dRight check
+        destX = getX() + 2;
+        destY = getY();
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            Citizen* temp = new Citizen(destX, destY, getWorld());
+            Zombie* closestZ = getWorld()->getClosestZombieToCitizen(temp);
+            dRight = squareDistBetween(destX, destY, closestZ);
+            maxDist = (dRight > maxDist ? dRight : maxDist);
+            delete temp;
+        }
+
+        // dRight check (old)
+        /*destX = getX() + 2;
+        destY = getY();
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            dRight = squareDistBetween(destX, destY, z);
+            maxDist = (dRight > maxDist ? dRight : maxDist);
+        }*/
+
+        // dLeft check
+        destX = getX() - 2;
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            Citizen* temp = new Citizen(destX, destY, getWorld());
+            Zombie* closestZ = getWorld()->getClosestZombieToCitizen(temp);
+            dLeft = squareDistBetween(destX, destY, closestZ);
+            maxDist = (dLeft > maxDist ? dLeft : maxDist);
+            delete temp;
+        }
+
+        // dLeft check (old)
+        /*destX = getX() - 2;
+        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
+                && !getWorld()->playerBlocksMovement(destX, destY)) {
+            dLeft = squareDistBetween(destX, destY, z);
+            maxDist = (dLeft > maxDist ? dLeft : maxDist);
+        }*/
+
+        // if maxDist never increased, return immediately because it shouldn't move
+        if (maxDist == distZ)
+            return;
+        // otherwise, move the citizen in the direction that most increased distance
+        if (maxDist == dUp) {
+            setDirection(up);
+            moveTo(getX(), getY() + 2);
+            paralyze();
+            return;
+        }
+        if (maxDist == dDown) {
+            setDirection(down);
+            moveTo(getX(), getY() - 2);
+            paralyze();
+            return;
+        }
+        if (maxDist == dRight) {
+            setDirection(right);
+            moveTo(getX() + 2, getY());
+            paralyze();
+            return;
+        }
+        if (maxDist == dLeft) {
+            setDirection(left);
+            moveTo(getX() - 2, getY());
+            paralyze();
+            return;
+        }
+    }
+
+    // paralyze the citizen, should it reach this point
+    paralyze();
 }
 
 
@@ -517,10 +643,6 @@ Zombie::Zombie(double startX, double startY, StudentWorld *world)
 }
 
 /// Accessors ///
-
-bool Zombie::exits(const Actor *actor) const {
-    return false;
-}
 
 bool Zombie::isInfectible() const {
     return false;
@@ -719,7 +841,7 @@ void SmartZombie::determineNextDir() {
         Human* closest = getWorld()->getClosestPersonToZombie(this);
         // now we set the zombie's direction accordingly.
         // check if closest is more than 80 pixels away:
-        if (squareDistBetween(closest) > (80 * 80)) {
+        if (squareDistBetween(getX(), getY(), closest) > (80 * 80)) {
             int X = randInt(1, 4);
             switch (X) {
                 case 1:

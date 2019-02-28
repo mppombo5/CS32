@@ -27,7 +27,8 @@ public:
     bool overlaps(const Actor* actor) const;
     bool wouldOverlap(double destX, double destY, double actorX, double actorY) const;
     int infectionCount() const;
-    double squareDistBetween(const Actor *other) const;
+      // coordX and coordY have to be separately defined to check for potential distance as well
+    double squareDistBetween(double coordX, double coordY, const Actor *other) const;
 
     // Mutators
       // doSomething() to be called by move() function.
@@ -169,7 +170,6 @@ public:
     Zombie(double startX, double startY, StudentWorld* world);
 
     // Accessors
-    virtual bool exits(const Actor* actor) const;
     virtual bool isInfectible() const;
     virtual bool isZombie() const;
 
