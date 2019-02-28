@@ -29,6 +29,7 @@ public:
     void setFinished();
     void killActorsInPits(const Actor* killer);
     void killBurnedActors(const Actor* killer);
+    void removeExitedCitizens(const Actor *exit);
     void infectOverlappingActors(const Actor* killer);
 
     // Accessors

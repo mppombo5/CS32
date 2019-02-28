@@ -256,8 +256,14 @@ void StudentWorld::killActorsInPits(const Actor *killer) {
     list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (!actor->isDead() && actor->overlaps(killer) && actor->fallsIntoPits())
+        if (!actor->isDead() && actor->overlaps(killer) && actor->fallsIntoPits()) {
             actor->setDead();
+            // isInfectible doubles as a useful way to tell if it's a citizen.
+            if (actor->isInfectible()) {
+                playSound(SOUND_CITIZEN_DIE);
+                increaseScore(-1000);
+            }
+        }
     }
 }
 
@@ -270,8 +276,25 @@ void StudentWorld::killBurnedActors(const Actor *killer) {
     list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (!actor->isDead() && actor->overlaps(killer) && actor->damagedByFlame())
+        if (!actor->isDead() && actor->overlaps(killer) && actor->damagedByFlame()) {
             actor->setDead();
+            if (actor->isInfectible()) {
+                playSound(SOUND_CITIZEN_DIE);
+                increaseScore(-1000);
+            }
+        }
+    }
+}
+
+void StudentWorld::removeExitedCitizens(const Actor *exit) {
+    list<Actor*>::iterator it;
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* a = *it;
+        if (!a->isDead() && a->isInfectible() && a->overlaps(exit)) {
+            a->setDead();
+            increaseScore(500);
+            playSound(SOUND_CITIZEN_SAVED);
+        }
     }
 }
 

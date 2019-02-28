@@ -378,8 +378,8 @@ void Citizen::infect() {
 }
 
 void Citizen::setDead() {
-    getWorld()->playSound(SOUND_CITIZEN_DIE);
     SentientActor::setDead();
+    getWorld()->decCitsLeft();
 }
 
 void Citizen::paralyze() {
@@ -392,10 +392,11 @@ void Citizen::doSomething() {
 
     // check and respond for infection
     if (isInfected()) {
+        if (infectionCount() == 0)
+            getWorld()->playSound(SOUND_CITIZEN_INFECTED);
         increaseInfection();
         if (infectionCount() >= 500) {
             setDead();
-            getWorld()->decCitsLeft();
             getWorld()->playSound(SOUND_ZOMBIE_BORN);
             getWorld()->increaseScore(-1000);
             int X = randInt(1, 10);
@@ -422,7 +423,7 @@ void Citizen::doSomething() {
     // if the player is the closest entity and <= 80 pixels away, move the citizen closer
     if ((distP < distZ || distZ == -1) && distP <= (80 * 80)) {
         // citizen is on the same column as Penelope
-        if (containedIn(getX(), p->getX()-10, p->getX()+10)) {
+        if (getX() == p->getX()) {
             double destX = getX();
             double destY = getY() + (getY() > p->getY() ? -2 : 2);
             if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
@@ -434,7 +435,7 @@ void Citizen::doSomething() {
             }
         }
         // citizen is on the same row as Penelope
-        else if (containedIn(getY(), p->getY()-10, p->getY()+10)) {
+        else if (getY() == p->getY()) {
             double destX = getX() + (getX() > p->getX() ? -2 : 2);
             double destY = getY();
             if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
@@ -520,20 +521,12 @@ void Citizen::doSomething() {
             // make a temporary citizen at (destX,destY) and find the nearest zombie to that one
             Citizen* temp = new Citizen(destX, destY, getWorld());
             Zombie* closestZ = getWorld()->getClosestZombieToCitizen(temp);
+            // don't need to check if closestZ is nullptr, because we already know there's one nearby
             dUp = squareDistBetween(destX, destY, closestZ);
             maxDist = (dUp > maxDist ? dUp : maxDist);
             // no memory leaks in my town
             delete temp;
         }
-
-        // dUp check (old)
-        /*destX = getX();
-        destY = getY() + 2;
-        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
-                && !getWorld()->playerBlocksMovement(destX, destY)) {
-            dUp = squareDistBetween(destX, destY, z);
-            maxDist = (dUp > maxDist ? dUp : maxDist);
-        }*/
 
         // dDown check
         destY = getY() - 2;
@@ -545,14 +538,6 @@ void Citizen::doSomething() {
             maxDist = (dDown > maxDist ? dDown : maxDist);
             delete temp;
         }
-
-        // dDown check (old)
-        /*destY = getY() - 2;
-        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
-                && !getWorld()->playerBlocksMovement(destX, destY)) {
-            dDown = squareDistBetween(destX, destY, z);
-            maxDist = (dDown > maxDist ? dDown : maxDist);
-        }*/
 
         // dRight check
         destX = getX() + 2;
@@ -566,15 +551,6 @@ void Citizen::doSomething() {
             delete temp;
         }
 
-        // dRight check (old)
-        /*destX = getX() + 2;
-        destY = getY();
-        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
-                && !getWorld()->playerBlocksMovement(destX, destY)) {
-            dRight = squareDistBetween(destX, destY, z);
-            maxDist = (dRight > maxDist ? dRight : maxDist);
-        }*/
-
         // dLeft check
         destX = getX() - 2;
         if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
@@ -585,14 +561,6 @@ void Citizen::doSomething() {
             maxDist = (dLeft > maxDist ? dLeft : maxDist);
             delete temp;
         }
-
-        // dLeft check (old)
-        /*destX = getX() - 2;
-        if (!getWorld()->hasActorBlockingMovement(destX, destY, this)
-                && !getWorld()->playerBlocksMovement(destX, destY)) {
-            dLeft = squareDistBetween(destX, destY, z);
-            maxDist = (dLeft > maxDist ? dLeft : maxDist);
-        }*/
 
         // if maxDist never increased, return immediately because it shouldn't move
         if (maxDist == distZ)
@@ -862,12 +830,12 @@ void SmartZombie::determineNextDir() {
         else {
             // if it's in the same overlap column as closest, set its direction to
             // up or down depending on its relative y position
-            if (containedIn(getX(), closest->getX()-10, closest->getX()+10)) {
+            if (getX() == closest->getX()) {
                 setDirection(getY() > closest->getY() ? down : up);
                 return;
             }
             // if it's contained in the same row, set left or right relative to x position
-            else if (containedIn(getY(), closest->getY()-10, closest->getY()+10)) {
+            else if (getY() == closest->getY()) {
                 setDirection(getX() > closest->getX() ? left : right);
                 return;
             }
@@ -999,10 +967,8 @@ bool Exit::detectsExits() const {
 
 void Exit::doSomething() {
     // TODO: check for citizens exiting, implement once citizens are
+    getWorld()->removeExitedCitizens(this);
 
-    // debug statement to check for overlapping
-    //if (playerExits())
-    //    cerr << "The player has touched the exit!" << endl;
     if (playerExits() && getWorld()->citsLeft() == 0) {
         getWorld()->setFinished();
     }
