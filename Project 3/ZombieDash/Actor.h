@@ -28,10 +28,11 @@ public:
     bool overlaps(const Actor* actor) const;
     bool wouldOverlap(double destX, double destY, double actorX, double actorY) const;
     bool isInfected() const;
-     // this is a public boolean to tell whether or not it's being examined.
-     // specifically useful to avoid comparing movement checks against itself
-     // in StudentWorld.
+      // this is a public boolean to tell whether or not it's being examined.
+      // specifically useful to avoid comparing movement checks against itself
+      // in StudentWorld.
     int infectionCount() const;
+    double squareDistBetween(const Actor *other) const;
     StudentWorld* getWorld() const;
 
     // Mutators
@@ -151,9 +152,8 @@ public:
     virtual bool isInfectible() const;
 
     // Mutators
-    virtual void zombieMovement() = 0;
+    virtual void determineNextDir() = 0;
     virtual void doSomething();
-
 
 protected:
     // Accessors
@@ -177,7 +177,7 @@ public:
     DumbZombie(double startX, double startY, StudentWorld* world);
 
     // Mutators
-    virtual void zombieMovement();
+    virtual void determineNextDir();
     virtual void setDead();
 };
 
@@ -188,8 +188,10 @@ public:
     // Constructor
     SmartZombie(double startX, double startY, StudentWorld* world);
 
+    // Accessors
+
     // Mutators
-    virtual void zombieMovement();
+    virtual void determineNextDir();
     virtual void setDead();
 };
 

@@ -97,6 +97,13 @@ int Actor::infectionCount() const {
     return m_infectionCount;
 }
 
+double Actor::squareDistBetween(const Actor *other) const {
+    double dX = getX() - other->getX();
+    double dY = getY() - other->getY();
+
+    return (dX * dX) + (dY * dY);
+}
+
 StudentWorld* Actor::getWorld() const {
     return m_world;
 }
@@ -320,7 +327,8 @@ void Penelope::doSomething() {
             }
             // landmine: spawn a landmine where the player is standing
             case KEY_PRESS_TAB: {
-                getWorld()->addActor(new Landmine(getX(), getY(), getWorld()));
+                if (m_landmines > 0)
+                    getWorld()->addActor(new Landmine(getX(), getY(), getWorld()));
                 break;
             }
             default: break;
@@ -424,7 +432,7 @@ void Zombie::doSomething() {
     }
 
     // run the differentiated zombie movement between dumb and smart zombies
-    zombieMovement();
+    determineNextDir();
 
     // copy and paste code to set multX and multY
     multX = 0;
@@ -482,7 +490,8 @@ void DumbZombie::setDead() {
         // select a new random direction
         int multX = 0;
         int multY = 0;
-        switch (randInt(1,4)) {
+        int X = randInt(1,4);
+        switch (X) {
             case 1:
                 // up
                 multY = 1;
@@ -509,27 +518,26 @@ void DumbZombie::setDead() {
     }
 }
 
-void DumbZombie::zombieMovement() {
+void DumbZombie::determineNextDir() {
     // needs a new movement plan
     if (mvtPlan() <= 0) {
         newMvtPlan();
-        Direction newDir = getDirection();
-        switch (randInt(1,4)) {
+        int X = randInt(1,4);
+        switch (X) {
             case 1:
-                newDir = up;
-                break;
+                setDirection(up);
+                return;
             case 2:
-                newDir = down;
-                break;
+                setDirection(down);
+                return;
             case 3:
-                newDir = left;
-                break;
+                setDirection(left);
+                return;
             case 4:
-                newDir = right;
-                break;
-            default: break;
+                setDirection(right);
+                return;
+            default: return;
         }
-        setDirection(newDir);
     }
 }
 
@@ -546,11 +554,55 @@ void SmartZombie::setDead() {
     getWorld()->increaseScore(2000);
 }
 
-void SmartZombie::zombieMovement() {
+void SmartZombie::determineNextDir() {
     // needs a new movement plan
     if (mvtPlan() <= 0) {
         newMvtPlan();
-
+        Human* closest = getWorld()->getClosestPersonToZombie(this);
+        // now we set the zombie's direction accordingly.
+        // check if closest is more than 80 pixels away:
+        if (squareDistBetween(closest) > (80 * 80)) {
+            int X = randInt(1, 4);
+            switch (X) {
+                case 1:
+                    setDirection(up);
+                    return;
+                case 2:
+                    setDirection(down);
+                    return;
+                case 3:
+                    setDirection(left);
+                    return;
+                case 4:
+                    setDirection(right);
+                    return;
+                default: return;
+            }
+        }
+        else {
+            // if it's in the same overlap column as closest, set its direction to
+            // up or down depending on its relative y position
+            if (containedIn(getX(), closest->getX()-10, closest->getX()+10)) {
+                setDirection(getY() > closest->getY() ? down : up);
+                return;
+            }
+            // if it's contained in the same row, set left or right relative to x position
+            else if (containedIn(getY(), closest->getY()-10, closest->getY()+10)) {
+                setDirection(getX() > closest->getX() ? left : right);
+                return;
+            }
+            else {
+                int X = randInt(1, 2);
+                switch (X) {
+                    case 1:
+                        setDirection(getX() > closest->getX() ? left : right);
+                        return;
+                    case 2:
+                        setDirection(getY() > closest->getY() ? down : up);
+                    default: return;
+                }
+            }
+        }
     }
 }
 

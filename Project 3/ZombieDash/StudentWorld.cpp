@@ -292,6 +292,28 @@ void StudentWorld::infectOverlappingActors(const Actor* killer) {
     }
 }
 
+// used in Smart Zombies to get the closest person. Is there a better way to do this? Probably.
+Human* StudentWorld::getClosestPersonToZombie(const Zombie* zombie) const {
+    Actor* closestPerson = m_player;
+    // initialize closestDist to the player, and then loop through and see if any citizens are closer
+    double closestDist = zombie->squareDistBetween(m_player);
+
+    list<Actor*>::const_iterator it;
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* actor = *it;
+        // important to note: only humans are infectible, so this is a reasonable check for humanity
+        if (!actor->isDead() && actor != zombie && actor->isInfectible()) {
+            double currentDist = zombie->squareDistBetween(actor);
+            if (currentDist < closestDist) {
+                closestPerson = actor;
+                closestDist = currentDist;
+            }
+        }
+    }
+    // we know that closestPerson will be a human, so we need to return as such
+    return dynamic_cast<Human*>(closestPerson);
+}
+
 
 
 

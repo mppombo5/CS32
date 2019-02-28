@@ -8,7 +8,9 @@
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 class Actor;
+class Human;
 class Penelope;
+class Zombie;
 
 class StudentWorld: public GameWorld
 {
@@ -30,6 +32,7 @@ public:
 
     // Accessors
     Penelope* getPlayer() const;
+    Human* getClosestPersonToZombie(const Zombie* zombie) const;
     int citsLeft() const;
       // always pass in "this" to hasActorBlockingMovement, so it won't compare against itself
     bool hasActorBlockingMovement(double destX, double destY, const Actor* checker) const;
