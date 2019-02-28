@@ -62,43 +62,33 @@ int StudentWorld::init()
                     case Level::empty:
                         break;
                     case Level::smart_zombie:
-                        cout << "Smart zombie at " << i << "," << k << endl;
                         m_actors.push_back(new SmartZombie(startX, startY, this));
                         break;
                     case Level::dumb_zombie:
-                        cout << "Dumb zombie at " << i << "," << k << endl;
                         m_actors.push_back(new DumbZombie(startX, startY, this));
                         break;
                     case Level::player:
-                        cout << "Penelope starts at " << i << "," << k << endl;
                         m_player = new Penelope(startX, startY, this);
                         break;
                     case Level::exit:
-                        cout << "Exit at " << i << "," << k << endl;
                         m_actors.push_back(new Exit(startX, startY, this));
                         break;
                     case Level::citizen:
                         m_citsLeft++;
-                        cout << "Citizen at " << i << "," << k << endl;
                         break;
                     case Level::wall:
-                        cout << "Wall at " << i << "," << k << endl;
                         m_actors.push_back(new Wall(startX, startY, this));
                         break;
                     case Level::pit:
-                        cout << "Pit at " << i << "," << k << endl;
                         m_actors.push_back(new Pit(startX, startY, this));
                         break;
                     case Level::vaccine_goodie:
-                        cout << "Vaccine at " << i << "," << k << endl;
                         m_actors.push_back(new Vaccine(startX, startY, this));
                         break;
                     case Level::gas_can_goodie:
-                        cout << "Gas can at " << i << "," << k << endl;
                         m_actors.push_back(new GasCan(startX, startY, this));
                         break;
                     case Level::landmine_goodie:
-                        cout << "Landmine at " << i << "," << k << endl;
                         m_actors.push_back(new LandmineGoodie(startX, startY, this));
                         break;
                 }
@@ -182,22 +172,24 @@ void StudentWorld::addActor(Actor *a) {
     m_actors.push_back(a);
 }
 
-//// These next three functions return whether or not there is
-//// an actor in the world that fulfills this boolean
+//// These next few functions return whether or not there is
+//// an actor in the world that fulfills a certain condition
 
 // previously looped through m_actors in actor implementation, now moved to here
-bool StudentWorld::hasActorBlockingMovement(double destX, double destY) const {
-    Penelope* player = getPlayer();
-    if (!player->isDead() && player->blocksMovement(destX, destY, player));
-
+bool StudentWorld::hasActorBlockingMovement(double destX, double destY, const Actor* checker) const {
     list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         // check if each actor would block actor
-        if (!actor->isDead() && actor->blocksMovement(destX, destY, actor))
+        if (!actor->isDead() && !(actor == checker) && actor->blocksMovement(destX, destY, actor))
             return true;
     }
     return false;
+}
+
+bool StudentWorld::playerBlocksMovement(double destX, double destY) const {
+    Penelope* player = getPlayer();
+    return (!player->isDead() && player->blocksMovement(destX, destY, player));
 }
 
 bool StudentWorld::hasActorBlockingFlames(double destX, double destY) const {
@@ -211,7 +203,21 @@ bool StudentWorld::hasActorBlockingFlames(double destX, double destY) const {
     return false;
 }
 
-// check if an infectable actor would get attacked with vomit
+bool StudentWorld::actorWouldOverlap(double destX, double destY) const {
+    Penelope* player = getPlayer();
+    if (!player->isDead() && player->wouldOverlap(destX, destY, player->getX(), player->getY()))
+        return true;
+
+    list<Actor*>::const_iterator it;
+    for (it = m_actors.begin(); it != m_actors.end(); it++) {
+        Actor* actor = *it;
+        if (!actor->isDead() && actor->wouldOverlap(destX, destY, actor->getX(), actor->getY()))
+            return true;
+    }
+    return false;
+}
+
+// check if an infectible actor would get attacked with vomit
 bool StudentWorld::actorWouldGetPukedOn(double destX, double destY) const {
     Penelope* player = getPlayer();
     if (!player->isDead() && player->wouldOverlap(destX, destY, player->getX(), player->getY()))
@@ -220,7 +226,7 @@ bool StudentWorld::actorWouldGetPukedOn(double destX, double destY) const {
     list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (!actor->isDead() && actor->isInfectable() && actor->wouldOverlap(destX, destY, actor->getX(), actor->getY()))
+        if (!actor->isDead() && actor->isInfectible() && actor->wouldOverlap(destX, destY, actor->getX(), actor->getY()))
             return true;
     }
     return false;

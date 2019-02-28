@@ -19,7 +19,7 @@ public:
     virtual bool blocksMovement(double destX, double destY, const Actor *actor) const = 0;
     virtual bool damagedByFlame() const = 0;
     virtual bool triggersLandmines() const = 0;
-    virtual bool isInfectable() const = 0;
+    virtual bool isInfectible() const = 0;
     virtual bool exits(const Actor* actor) const;
     virtual bool detectsExits() const;
     virtual bool blocksFlames(double destX, double destY, const Actor* actor) const;
@@ -29,6 +29,9 @@ public:
     bool overlaps(const Actor* actor) const;
     bool wouldOverlap(double destX, double destY, double actorX, double actorY) const;
     bool isInfected() const;
+     // this is a public boolean to tell whether or not it's being examined.
+     // specifically useful to avoid comparing movement checks against itself
+     // in StudentWorld.
     int infectionCount() const;
     StudentWorld* getWorld() const;
 
@@ -39,7 +42,6 @@ public:
       // Each actor can specify whether or not they can be killed (true/false)
     virtual void setDead() = 0;
     virtual void infect();
-    void safeMoveTo(double destX, double destY);
     void increaseInfection();
 
 protected:
@@ -49,11 +51,13 @@ protected:
       // setDead() will be different for sentient and environmental actors, but I still need a way to set m_dead to false
     void setm_dead();
     void setm_infected();
+      // only actors should set whether or not they're being examined.
 
 private:
     StudentWorld* m_world;
     bool m_dead;
     bool m_infected;
+    bool m_beingExamined;
     int m_infectionCount;
 };
 
@@ -75,7 +79,7 @@ public:
     virtual bool damagedByFlame() const;
     virtual bool triggersLandmines() const;
     virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
-    virtual bool isInfectable() const;
+    virtual bool isInfectible() const;
 
     // Mutators
     virtual void setDead();
@@ -106,6 +110,7 @@ public:
     // Mutators
     virtual void doSomething();
     virtual void setDead();
+    void safeMoveTo(double destX, double destY);
     void addVaccine();
     void addFlames();
     void addLandmines();
@@ -128,15 +133,25 @@ public:
 
     // Accessors
     virtual bool exits(const Actor* actor) const;
-    virtual bool isInfectable() const;
+    virtual bool isInfectible() const;
 
     // Mutators
-    virtual void doSomething();
     virtual void zombieMovement() = 0;
+    virtual void doSomething();
+
+
+protected:
+    // Accessors
+    int mvtPlan() const;
+
+    // Mutators
+    void decMvtPlan();
+    void newMvtPlan();
+    void delMvtPlan();
 
 private:
     bool m_paralyzed;
-    int m_mvtPlanDist;
+    int m_mvtPlan;
 };
 
 /// Dumb Zombie ///
@@ -146,8 +161,9 @@ public:
     // Constructor
     DumbZombie(double startX, double startY, StudentWorld* world);
 
-    // Mutator
+    // Mutators
     virtual void zombieMovement();
+    virtual void setDead();
 };
 
 /// Smart Zombie ///
@@ -157,8 +173,9 @@ public:
     // Constructor
     SmartZombie(double startX, double startY, StudentWorld* world);
 
-    // Mutator
+    // Mutators
     virtual void zombieMovement();
+    virtual void setDead();
 };
 
 
@@ -177,7 +194,7 @@ public:
     virtual bool fallsIntoPits() const;
     virtual bool damagedByFlame() const;
     virtual bool triggersLandmines() const;
-    virtual bool isInfectable() const;
+    virtual bool isInfectible() const;
 
     // Mutators
     virtual void setDead();

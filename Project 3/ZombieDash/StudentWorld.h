@@ -31,8 +31,11 @@ public:
     // Accessors
     Penelope* getPlayer() const;
     int citsLeft() const;
-    bool hasActorBlockingMovement(double destX, double destY) const;
+      // always pass in "this" to hasActorBlockingMovement, so it won't compare against itself
+    bool hasActorBlockingMovement(double destX, double destY, const Actor* checker) const;
+    bool playerBlocksMovement(double destX, double destY) const;
     bool hasActorBlockingFlames(double destX, double destY) const;
+    bool actorWouldOverlap(double destX, double destY) const;
     bool actorWouldGetPukedOn(double destX, double destY) const;
     bool actorTriggersLandmine(const Actor* checker) const;
 

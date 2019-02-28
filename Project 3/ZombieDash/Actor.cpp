@@ -54,6 +54,7 @@ Actor::Actor(int imageID, double startX, double startY, Direction startDir, int 
     m_world = world;
     m_dead = false;
     m_infected = false;
+    m_beingExamined = false;
     m_infectionCount = 0;
 }
 
@@ -81,7 +82,7 @@ bool Actor::isDead() const {
 // "blocked" checks whether or not the actor *is movementBlocked* by any of StudentWorld's actors
 // "blocks" means it blocksMovement the movement of an actor to a destination
 bool Actor::movementBlocked(double destX, double destY) const {
-    return getWorld()->hasActorBlockingMovement(destX, destY);
+    return getWorld()->hasActorBlockingMovement(destX, destY, this);
 }
 
 bool Actor::flameBlocked(double destX, double destY) const {
@@ -111,12 +112,6 @@ StudentWorld* Actor::getWorld() const {
 }
 
 /// Mutators ///
-
-// simply makes it easier to make something move, as the check is built-in
-void Actor::safeMoveTo(double destX, double destY) {
-    if (!movementBlocked(destX, destY))
-        moveTo(destX, destY);
-}
 
 void Actor::increaseInfection() {
     m_infectionCount++;
@@ -180,7 +175,7 @@ bool SentientActor::blocksMovement(double destX, double destY, const Actor *acto
     return intersectsBoundingBox(destX, destY, this);
 }
 
-bool SentientActor::isInfectable() const {
+bool SentientActor::isInfectible() const {
     return true;
 }
 
@@ -216,6 +211,12 @@ int Penelope::getFlames() const {
 void Penelope::setDead() {
     SentientActor::setDead();
     getWorld()->playSound(SOUND_PLAYER_DIE);
+}
+
+// makes it easier to move somewhere by removing the block checks each time
+void Penelope::safeMoveTo(double destX, double destY) {
+    if (!getWorld()->hasActorBlockingMovement(destX, destY, this))
+        moveTo(destX, destY);
 }
 
 void Penelope::doSomething() {
@@ -332,7 +333,7 @@ void Penelope::addLandmines() {
 
 Zombie::Zombie(double startX, double startY, StudentWorld *world)
 : SentientActor(IID_ZOMBIE, startX, startY, right, 0, world) {
-    m_mvtPlanDist = 0;
+    m_mvtPlan = 0;
     m_paralyzed = false;
 }
 
@@ -342,11 +343,27 @@ bool Zombie::exits(const Actor *actor) const {
     return false;
 }
 
-bool Zombie::isInfectable() const {
+bool Zombie::isInfectible() const {
     return false;
 }
 
+int Zombie::mvtPlan() const {
+    return m_mvtPlan;
+}
+
 /// Mutators ///
+
+void Zombie::decMvtPlan() {
+    m_mvtPlan--;
+}
+
+void Zombie::newMvtPlan() {
+    m_mvtPlan = randInt(3, 10);
+}
+
+void Zombie::delMvtPlan() {
+    m_mvtPlan = 0;
+}
 
 void Zombie::doSomething() {
     if (isDead())
@@ -376,6 +393,7 @@ void Zombie::doSomething() {
             break;
         default: break;
     }
+
     // set vomit destinations (vDest) for x and y
     double vDestX = getX() + (multX * SPRITE_WIDTH);
     double vDestY = getY() + (multY * SPRITE_HEIGHT);
@@ -388,6 +406,38 @@ void Zombie::doSomething() {
         }
     }
 
+    // run the differentiated zombie movement between dumb and smart zombies
+    zombieMovement();
+
+    // copy and paste code to set multX and multY
+    multX = 0;
+    multY = 0;
+    switch (getDirection()) {
+        case up:
+            multY = 1;
+            break;
+        case down:
+            multY = -1;
+            break;
+        case right:
+            multX = 1;
+            break;
+        case left:
+            multX = -1;
+            break;
+        default: break;
+    }
+    // now move in the direction it's facing
+    //if (!movementBlocked(getX() + multX, getY() + multY)) {
+    double destX = getX() + multX;
+    double destY = getY() + multY;
+    if (!getWorld()->playerBlocksMovement(destX, destY) && !getWorld()->hasActorBlockingMovement(destX, destY, this)) {
+        moveTo(destX, destY);
+        decMvtPlan();
+    }
+    else
+        delMvtPlan();
+
     // this goes at the end to switch its paralyzed state
     m_paralyzed = true;
 }
@@ -398,18 +448,82 @@ void Zombie::doSomething() {
 /// Dumb/Smart Zombie Implementation ///
 ////////////////////////////////////////
 
+/// Dumb Zombie ///
+
 DumbZombie::DumbZombie(double startX, double startY, StudentWorld *world)
 : Zombie(startX, startY, world) {
 
 }
 
-SmartZombie::SmartZombie(double startX, double startY, StudentWorld *world)
-: Zombie(startX, startY, world) {
-
+void DumbZombie::setDead() {
+    SentientActor::setDead();
+    getWorld()->playSound(SOUND_ZOMBIE_DIE);
+    getWorld()->increaseScore(1000);
+    if (randInt(1, 10) == 5) {
+        // the zombie was carrying a vaccine, so try and fling it away
+        // select a new random direction
+        int multX = 0;
+        int multY = 0;
+        switch (randInt(1,4)) {
+            case 1:
+                // up
+                multY = 1;
+                break;
+            case 2:
+                // down
+                multY = -1;
+                break;
+            case 3:
+                // right
+                multX = 1;
+                break;
+            case 4:
+                // left
+                multX = -1;
+                break;
+            default: break;
+        }
+        // select a new destination SPRITE_HEIGHT or WIDTH away from the deceased
+        double destX = getX() + (multX * SPRITE_WIDTH);
+        double destY = getY() + (multY * SPRITE_HEIGHT);
+        if (!getWorld()->actorWouldOverlap(destX, destY))
+            getWorld()->addActor(new Vaccine(destX, destY, getWorld()));
+    }
 }
 
 void DumbZombie::zombieMovement() {
+    // needs a new movement plan
+    if (mvtPlan() <= 0) {
+        newMvtPlan();
+        Direction newDir = getDirection();
+        switch (randInt(1,4)) {
+            case 1:
+                newDir = up;
+                break;
+            case 2:
+                newDir = down;
+                break;
+            case 3:
+                newDir = left;
+                break;
+            case 4:
+                newDir = right;
+                break;
+            default: break;
+        }
+        setDirection(newDir);
+    }
+}
 
+/// Smart Zombie ///
+
+SmartZombie::SmartZombie(double startX, double startY, StudentWorld *world)
+        : Zombie(startX, startY, world) {
+
+}
+
+void SmartZombie::setDead() {
+    SentientActor::setDead();
 }
 
 void SmartZombie::zombieMovement() {
@@ -448,7 +562,7 @@ bool EnvironmentalActor::blocksMovement(double destX, double destY, const Actor 
     return false;
 }
 
-bool EnvironmentalActor::isInfectable() const {
+bool EnvironmentalActor::isInfectible() const {
     return false;
 }
 
@@ -665,7 +779,7 @@ void Landmine::setDead() {
             double destX = getX() + (SPRITE_WIDTH * multX);
             double destY = getY() + (SPRITE_HEIGHT * multY);
             if (!flameBlocked(destX, destY))
-                getWorld()->addActor(new Flame(destX, destY, right, getWorld()));
+                getWorld()->addActor(new Flame(destX, destY, up, getWorld()));
             else
                 cerr << "An actor is blocking the creation of a flame!" << endl;
         }
