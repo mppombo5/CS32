@@ -79,13 +79,6 @@ public:
 
     // Mutators
     virtual void setDead();
-
-protected:
-    // Accessors
-
-    // Mutators
-
-private:
 };
 
 
@@ -103,9 +96,6 @@ public:
 
     // Mutators
     virtual void infect();
-
-private:
-
 };
 
 
@@ -147,8 +137,6 @@ class Citizen: public Human {
 public:
     // Constructor
     Citizen(double startX, double startY, StudentWorld* world);
-
-    // Accessors
 
     // Mutators
     virtual void doSomething();
@@ -213,8 +201,6 @@ public:
     // Constructor
     SmartZombie(double startX, double startY, StudentWorld* world);
 
-    // Accessors
-
     // Mutators
     virtual void setDead();
 
@@ -247,9 +233,6 @@ public:
 protected:
     // Accessors
     virtual bool blocksMovement(double destX, double destY, const Actor *actor) const;
-
-private:
-
 };
 
 
@@ -273,9 +256,6 @@ protected:
 
     // Mutators
     virtual void setDead();
-
-private:
-
 };
 
 
@@ -289,7 +269,6 @@ public:
 
     // Accessors
     virtual bool detectsExits() const;
-    bool citExits() const;
 
     // Mutators
     virtual void doSomething();
@@ -299,11 +278,6 @@ public:
 protected:
     // Accessors
     bool playerExits() const;
-
-    // Mutators
-
-private:
-
 };
 
 
@@ -321,9 +295,6 @@ public:
     // Mutators
     virtual void doSomething();
     virtual void setDead();
-
-private:
-
 };
 
 
@@ -335,8 +306,6 @@ class Flame: public EnvironmentalActor {
 public:
     // Constructor/Destructor
     Flame(double startX, double startY, Direction dir, StudentWorld* world);
-
-    // Accessors
 
     // Mutators
     virtual void doSomething();
@@ -354,8 +323,6 @@ class Vomit: public EnvironmentalActor {
 public:
     // Constructor/Destructor
     Vomit(double startX, double startY, Direction dir, StudentWorld* world);
-
-    // Accessors
 
     // Mutators
     virtual void doSomething();
@@ -400,13 +367,11 @@ public:
     virtual bool damagedByFlame() const;
 
     // Mutators
-    void doSomething();
+    virtual void doSomething();
 
 protected:
     // Mutators
     virtual void addToInventory() = 0;
-
-private:
 };
 
 
@@ -444,40 +409,8 @@ public:
     // Constructor/Destructor
     LandmineGoodie(double startX, double startY, StudentWorld* world);
 
-    // Accessors
-
-    // Mutators
-
 protected:
     virtual void addToInventory();
 };
 
 #endif // ACTOR_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

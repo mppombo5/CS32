@@ -27,37 +27,30 @@ public:
     void addActor(Actor* a);
     void decCitsLeft();
     void setFinished();
-    void killActorsInPits(const Actor* killer);
-    void killBurnedActors(const Actor* killer);
+    void killActorsInPits(const Actor* pit);
+    void killBurnedActors(const Actor* flame);
     void removeExitedCitizens(const Actor *exit);
-    void infectOverlappingActors(const Actor* killer);
+    void infectOverlappingActors(const Actor* vomit);
 
     // Accessors
-    Penelope* getPlayer() const;
-    Human* getClosestPersonToZombie(const Zombie* zombie) const;
-    Zombie* getClosestZombieToCitizen(const Citizen* citizen) const;
     int citsLeft() const;
+    Penelope* getPlayer() const;
       // always pass in "this" to hasActorBlockingMovement, so it won't compare against itself
     bool hasActorBlockingMovement(double destX, double destY, const Actor* checker) const;
     bool playerBlocksMovement(double destX, double destY) const;
     bool hasActorBlockingFlames(double destX, double destY) const;
     bool actorWouldOverlap(double destX, double destY) const;
     bool actorWouldGetPukedOn(double destX, double destY) const;
-    bool actorTriggersLandmine(const Actor* checker) const;
+    bool actorTriggersLandmine(const Actor* landmine) const;
+    Human* getClosestPersonToZombie(const Zombie* zombie) const;
+    Zombie* getClosestZombieToCitizen(const Citizen* citizen) const;
 
 private:
-    // I chose a list because it automatically removes any deleted objects instead of having to step over deleted ones.
-    // It's possible that a vector works the same way... I'm not sure. I need to study.
     std::list<Actor*> m_actors;
     Penelope* m_player;
-
-    // keeps track of how many citizens are left in the level
     int m_citsLeft;
-
-    // whether or not the level should be marked as finished
     bool m_levelFinished;
-    // this is a debug counter so I can have events happen at specific times, mostly to check
-    // actor interaction when spawning in the same location
+      // debug counter so I can have events occur at specified times
     int m_debugTicks;
 };
 
@@ -98,14 +91,3 @@ void StudentWorld::setFinished() {
 }
 
 #endif // STUDENTWORLD_H_
-
-
-
-
-
-
-
-
-
-
-

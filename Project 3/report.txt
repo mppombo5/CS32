@@ -1,0 +1,722 @@
+ZombieDash Report
+
+
+1. Below is a list of descriptions of all global and public member functions, including pseudocode where appropriate.
+
+=======================================================
+
+Global Functions
+
+
+bool containedIn(double num, double lower, double upper): returns whether or not num is contained between lower and upper, inclusive.
+
+
+bool intrudesRadius10(double firstX, double firstY, double secondX, double secondY): returns whether or not the square of the distance between the two coordinates is less than or equal to 100.
+
+
+bool intersectsBoundingBox(double destX, double destY, const Actor* otherActor): returns whether or not destX and destY + SPRITE_WIDTH/HEIGHT are contained in between otherActor's X and Y coordinates up to X/Y + SPRITE_WIDTH/HEIGHT.
+
+
+
+=======================================================
+
+Actor Functions
+
+
+Pure virtual functions:
+
+fallsIntoPits(): only sentient actors fall into pits, so I declared the boolean function in EnvironmentalActor and SentientActor separately. It doesn't make sense to declare it here.
+
+
+blocksMovement(double destX, double destY, const Actor* actor): only SentientActors and Walls block movement, so I just declared the appropriate booleans in those classes and false in EnvironmentalActor.
+
+
+damagedByFlame(): only sentient actors and goodies are damaged by flames, and that's enough variation to justify not specifying it in Actor.
+
+
+triggersLandmines(): only sentient actors trigger them, so it's better to declare it there.
+
+
+isInfectible(): only human actors can be infected, so it's better to declare it there.
+
+
+doSomething(): changes for every actor, so it doesn't make sense to have it do anything here.
+
+
+setDead(): not every actor can become dead, so it's better to implement it in the individual actors' classes.
+
+--------
+
+Virtual functions (not pure):
+
+bool blocksFlames(double destX, double destY, const Actor* actor): return false, because only walls and exits block them; it's better to just override that in those classes.
+
+
+bool detectsExits(): only humans detect exits, so just declare it false here and implement it otherwise.
+
+
+bool isZombie(): specifically used in the citizen class to check for the nearest zombie. Obviously only zombies return true, so it just returns false here.
+
+
+void infect(): not every actor can get infected, so do nothing by default.
+
+--------
+
+Non-virtual functions:
+
+bool isDead(): returns m_dead's value
+
+
+bool overlaps(const Actor* actor): return whether or not the actor overlaps within 10 pixels of the other actor passed into the function.
+
+
+bool wouldOverlap(double destX, double destY, double actorX, double actorY): checks if a movement to (destX,destY) would overlap with another actor, given by the other actor's getX() and getY()
+
+
+int infectionCount(): returns m_infectionCount; for humans, kill them if it reaches 500
+
+
+double squareDistBetween(double coordX, double coordY, const Actor* other): returns the square of the distance between two actors
+
+
+
+=======================================================
+
+SentientActor Functions
+
+
+Virtual functions:
+
+bool fallsIntoPits() override: return true, because all living actors can fall into pits.
+
+
+bool damagedByFlame() override: return true, since all living actors can be killed by flame
+
+
+bool triggersLandmines() override: return true, since they can set off landmines
+
+
+bool blocksMovement(double destX, double destY, const Actor* actor) override: return whether or not (destX,destY) intersects this actor's bounding box
+
+
+void setDead() override: if the actor is not already dead, kill it
+
+
+=======================================================
+
+Human Functions
+
+
+Virtual functions:
+
+bool isInfectible() override: return true, because humans are the only actor that can be infected. This also turns out to be a useful boolean to determine whether or not something is a citizen.
+
+
+bool exits(const Actor* actor) override: if actor detectsExits (so if it's an exit), return whether or not this human overlaps with it. Otherwise, return false.
+
+
+void infect() override: if this actor is not already infected, set its infection status to true.
+
+
+=======================================================
+
+Penelope Functions
+
+
+Virtual functions:
+
+void setDead() override: call SentientActor::setDead(), and then play the sound SOUND_PLAYER_DIE.
+
+
+void doSomething() override:
+	
+	if she's dead, immediately return out
+	
+	if she's infected, increase the infection count by 1
+	
+	if her infectionCount is 500, kill her
+	
+	if a key has been pressed, switch the key case:
+	
+		if a directional key was hit, set her direction accordingly and use safeMoveTo to move her 4 pixels in that direction.
+	
+		if spacebar was hit and she has one or more flame charges left:
+	
+			set X and Y multipliers according to her direction, and use a for loop to spawn three flames in the direction she's facing
+			
+			if any of the flames are blocked according to flameBlocked, break the loop and don't spawn more flames. Decrement the charges she has left.
+	
+		if enter was hit and she has one or more vaccines left, set her infection status to false and decrement her vaccines left.
+
+		if tab was hit and she has one or more landmines left, spawn a landmine where she's standing and decrement her landmines left.
+
+--------
+
+Non-virtual functions:
+
+int getVaccines(): return the number of vaccines she has left.
+
+	
+int getLandmines(): number of landmines she has left.
+
+
+int getFlames(): number of flame charges she has left.
+
+
+void addVaccine(): add one to the number of vaccines she has.
+
+
+void addFlames(): add 5 to the number of flame charges she has.
+
+
+void addLandmines(): add 2 to the number of landmines she has.
+
+
+=======================================================
+
+Citizen Functions
+
+
+Virtual functions:
+
+void doSomething() override:
+
+	if the citizen (referred to as "he" hereafter) is dead, return immediately.
+
+	if he's infected:
+
+	increment his infection count by 1
+
+	if his infection count is 500:
+
+		kill him and play SOUND_ZOMBIE_BORN
+
+		decrease the player's score by 1000
+
+		have there be a 70% chance that a dumb zombie is spawned where he was, and a 30% chance of a smart zombie being spawned.
+
+	if he's paralyzed, set his paralysis state to false and immediately return out
+
+	if the player is closer to him than any zombie, and the player is at most 80 pixels away from him:
+
+		if he's in exactly the same row/column as the player, simply move him towards the player provided he's not blocked in doing so.
+
+		otherwise, just move him in a random direction that will get him closer to the player provided he's not blocked in doing so.
+
+	if there is a zombie closer than 80 pixels away from him:
+
+		determine the move that would get him farthest away from any zombie nearest to him, and make sure he wouldn't be blocked in doing so.
+
+		if there is no such direction, return immediately
+
+		otherwise, move him in that direction.
+
+	in every part of this function, paralyze him before returning out of the function.
+
+
+void infect() override: if he was not already infected, play SOUND_CITIZEN_INFECTED and call Human::infect().
+
+
+void setDead() override: call SentientActor::setDead() and decrease the number of citizens left. No sound is played in this function.
+
+
+=======================================================
+
+Zombie Functions
+
+
+Virtual functions:
+
+bool isInfectible() override: return false - zombies cannot be infected.
+
+
+bool isZombie() override: through a painstakingly deliberate process, I decided to have this function return true.
+
+
+void doSomething() override:
+
+	if the zombie (hereafter referred to as "it") is dead, immediately return out.
+
+	if it's paralyzed, set its paralysis state to false and return out.
+
+	determine vomit coordinates in the direction it's facing, and determine whether or not vomit at these coordinates would cause an actor to get puked on (using StudentWorld's actorWouldGetPukedOn()).
+
+		if this is the case, spawn a Vomit actor at the specified coordinates and play SOUND_ZOMBIE_VOMIT.
+
+	call determineNextDir(), the differentiated function between smart and dumb zombies to determine the zombie's next direction.
+
+	move the zombie 2 pixels in the direction it's now facing, provided it wouldn't be blocked in doing so.
+
+		if it would in fact be blocked in doing so, set its movement distance plan to 0 to reset it on the next tick.
+
+	paralyze it so it doesn't do anything the next tick.
+
+
+=======================================================
+
+DumbZombie Functions
+
+
+Virtual functions:
+
+void setDead() override:
+
+	call SentientActor::setDead(), play SOUND_ZOMBIE_DIE, and increase the player's score by 1000.
+
+	use a random integer between 1 and 10 to have there be a 10% chance that:
+
+		a random direction is chosen, and if there is no actor that would overlap an object spawned 16 pixels away in that direction, spawn a vaccine goodie at that location.
+
+
+=======================================================
+
+SmartZombie Functions
+
+
+Virtual functions:
+
+void setDead() override: call SentientActor::setDead(), play SOUND_ZOMBIE_DIE, and increase the player's score by 2000.
+
+
+=======================================================
+
+EnvironmentalActor Functions
+
+
+Virtual functions:
+
+bool fallsIntoPits() override: return false, since no environmental actors should ever fall into pits.
+
+
+bool damagedByFlame() override: return false, to be overridden by those that can be damaged by flames.
+
+
+bool triggersLandmines() override: return false; only moving actors should ever set them off.
+
+
+bool isInfectible() override: return false, for the same reason as triggersLandmines.
+
+
+void setDead() override: if it is not already dead, set its dead status to true.
+
+
+=======================================================
+
+Wall Functions
+
+
+Virtual functions:
+
+bool blocksFlames(double destX, destY, const Actor* actor) override: return true a flame spawned at a certain location would overlap this wall.
+
+
+void doSomething() override: do absolutely nothing.
+
+
+=======================================================
+
+Exit Functions
+
+
+Virtual functions:
+
+bool detectsExits() override: return true, since this is the only actor that detects exits.
+
+
+void doSomething() override:
+
+	use StudentWorld's removeExitedCitizens function to kill overlapping citizens and decrease the count accordingly.
+
+	if the player exits and there are no citizens left in the world, tell the world that the level is finished.
+
+
+void setDead() override: do nothing, since an exit should never die.
+
+
+bool blocksFlames(double destX, double destY, const Actor* actor) override: return whether or not a flame spawned at (destX,destY) would overlap with this exit, according to the spec.
+
+
+=======================================================
+
+Pit Functions
+
+
+Virtual functions:
+
+bool damagedByFlame() override: return false, since pits should never die.
+
+
+void setDead() override: do nothing, for the same reason.
+
+
+void doSomething() override: call StudentWorld's killActorsInPits, with this as the parameter.
+
+
+=======================================================
+
+Flame Functions
+
+
+Virtual functions:
+
+void doSomething() override:
+
+	increment the number of ticks that this flame has been alive
+
+	if this flame is dead, immediately return out
+
+	if this flame has been alive for two ticks, kill it and return out
+
+	otherwise, call StudentWorld's killBurnedActors on this actor.
+
+
+=======================================================
+
+Vomit Functions
+
+
+Virtual functions:
+
+void doSomething() override:
+
+	increment the ticks it's been alive
+
+	if it's dead, return out
+
+	if it's been alive for more than two ticks, kill it and return out
+
+	otherwise, call the world's infectOverlappingActors on this actor.
+
+
+=======================================================
+
+Landmine Functions
+
+
+Virtual Functions:
+
+bool damagedByFlame() override: return true, because they can be killed by flames.
+
+
+void doSomething() override:
+
+	if it's dead, return out
+
+	if it's not yet active, decrement the number of safety ticks left
+
+		if the number of safety ticks reaches 0, activate it
+
+		return out immediately
+
+	if it's active and an actor has triggered a landmine, kill it
+
+
+void setDead() override:
+
+	call EnvironmentalActor::setDead()
+
+	play SOUND_LANDMINE_EXPLODE
+
+	spawn flames in a 3x3 formation surrounding the landmine, provided that each flame isn't blocked by an actor that blocks flames.
+
+	spawn a pit where the landmine once stood.
+
+
+=======================================================
+
+Goodies Functions
+
+
+Virtual functions
+
+bool damagedByFlame() override: return true, since flames kill goodies.
+
+
+void doSomething() override:
+
+	if the goodie is dead, return out immediately
+
+	if the player overlaps with this goodie:
+
+		increase the player's score by 50, kill this goodie, and play SOUND_GOT_GOODIE
+
+		run the differentiated goodie function addToInventory, which increases the amount of charges/uses that the player has left.
+
+
+=======================================================
+
+Vaccines, Gas Canisters, and Landmine Goodies:
+
+The only difference between these three is what they add to the player's inventory (and that function is protected anyway).
+
+=======================================================
+
+StudentWorld Functions
+
+
+Virtual functions:
+
+int init() override:
+
+	initialize a level, and load it to the text file called "levelxx.txt", where "xx" is the same as getLevel().
+
+	get the LoadResult of the level, and for each result:
+
+		if the file was not found or the current level is greater than 99, return GWSTATUS_PLAYER_WON.
+
+		if the file was improperly formatted, return GWSTATUS_LEVEL_ERROR.
+
+		if the file was successfully loaded, initialize the level:
+
+			set the citizens left to 0, and the levelFinished status to false.
+
+			for each icon in the level file, push the corresponding actor onto the list of actors. If the corresponding actor is a player, dynamically allocate a new Penelope object at that location to m_player.
+
+			return GW_STATUS_CONTINUE_GAME.
+
+		otherwise, I have no idea what happened - so return GWSTATUS_LEVEL_ERROR.
+
+
+int move() override:
+
+	have the player do something
+
+	then, for each actor in the actor list:
+
+		if the actor is not dead, have it do something.
+
+		if the player is dead after that doSomething, immediately return GWSTATUS_PLAYER_DIED.
+
+		if the level has been finished, play SOUND_LEVEL_FINISHED and return GWSTATUS_FINISHED_LEVEL.
+
+	for each actor in the actor list, delete that actor and erase it from the list if it's dead.
+
+	update the game status text line using an output stringstream and a bunch of variables.
+
+	return GWSTATUS_CONTINUE_GAME.
+
+
+void cleanUp() override:
+
+	for each actor in the actor list, delete it and erase it from the list.
+
+	if the player is not equal to the nullptr, delete it.
+
+	set the player to the nullptr.
+
+--------
+
+Non-virtual functions:
+
+void addActor(Actor* a): insert a into the list of actors.
+
+
+void decCitsLeft(): decrement the number of citizens left in the world.
+
+
+void setFinished(): set the status of the world to finished.
+
+
+void killActorsInPits(const Actor* killer):
+
+	if the player overlaps with the killer (a pit), kill them.
+
+	for each actor in the list of actors:
+
+		if the actor isn't dead and overlaps the pit and the actor falls into pits, kill the actor of interest.
+
+		if the actor is a citizen, play SOUND_CITIZEN_DIE and decrease the player's score by 1000.
+
+
+void killBurnedActors(const Actor* killer):
+
+	this follows largely the same logic as killActorsInPits. The only difference is that it kills the actor if it's damaged by flames.
+
+
+void removeExitedCitizens(const Actor* exit):
+
+	for each actor in the list of actors:
+
+		if the actor isn't dead, is a citizen, and overlaps with the exit:
+
+			kill the citizen, increase the player's score by 500, and play SOUND_CITIZEN_SAVED.
+
+
+void infectOverlappingActors(const Actor* vomit):
+
+	if the player overlaps with the vomit, infect the player.
+
+	for each actor in the list of actors:
+
+		if the actor isn't dead and overlaps with the vomit, infect the actor.
+
+
+int citsLeft(): returns the number of citizens left in the world.
+
+
+Penelope* getPlayer(): returns the player in the world.
+
+
+bool hasActorBlockingMovement(double destX, double desty, const Actor* checker):
+
+	for each actor in the list of actors:
+
+		if the actor isn't dead and the actor isn't the checker and the actor blocks movement to (destX,destY), then return true.
+
+	if no such actor was found, return false.
+
+
+bool playerBlocksMovement(double destX, double destY): return whether or not the player would block the movement of an actor onto (destX, destY).
+
+
+bool hasActorBlockingFlames(double destX, double destY): return whether or not an actor in the list of actors would block the creation of a flame at (destX,destY).
+
+
+bool actorWouldOverlap(double destX, double destY): return whether or not an actor in the list of actors would overlap an object if it were at (destX,destY).
+
+
+bool actorWouldGetPukedOn(double destX, double destY):
+
+	if the player isn't dead and would overlap vomit at (destX, destY), return true.
+
+	for each actor in the list of actors:
+
+		if the actor isn't dead and is infectible and would overlap vomit at (destX,destY), return true.
+
+	if no such actor or player was found, return false.
+
+
+bool actorTriggersLandmine(const Actor* landmine):
+
+	if the player overlaps the landmine, return true.
+
+	otherwise, for each actor in the list of actors:
+
+		if the actor isn't dead and overlaps the landmine and triggers landmines, return true.
+
+	if no such player or actor has been found, return false.
+
+
+Human* getClosestPersonToZombie(const Zombie* zombie):
+
+	initialize an actor pointer closestPerson to the player.
+
+	initialize a double closestDist to the square distance between the zombie and the player.
+
+	then, for each actor in the list of actors:
+
+		if the actor is dead and the actor is infectible (so a citizen):
+
+			compare the current square distance between the zombie and the citizen.
+
+			if the current distance is less than closestDist:
+
+				set closestPerson to the current actor, and closestDist to the current distance.
+
+	return closestPerson, dynamically casted to a Human pointer. this is the closest person to the zombie.
+
+
+Zombie* getClosestZombieToCitizen(const Citizen* citizen):
+
+	initialize an actor pointer closestZombie to nullptr.
+
+	initialize a double closestDist to an arbitrary value - I chose 0.
+
+	initialize a boolean found to false.
+
+	then, for each actor in the list of actors:
+
+		if the actor is a zombie and is not dead:
+
+			initialize a double currentDist to the square distance between the citizen and the zombie.
+
+			if found is false (still hasn't been found):
+
+				found gets true, closestDist gets currentDist, and closestZombie is set to the current zombie.
+
+			otherwise:
+
+				if currentDist is less than closestDist, closestDist gets currentDist and closestZombie gets the current zombie.
+
+	if closestZombie is not nullptr, return closestZombie, dynamically casted as a Zombie pointer. this is the closest zombie to the citizen.
+
+	otherwise, return nullptr.
+
+=======================================================
+
+
+2. To my knowledge, there are no missing features or unfinished implementations. The only bug I notice is that citizens seem to spazz out when in the presence of both the player and an encroaching zombie, but it doesn't affect gameplay and on the whole still adheres to the spec.
+
+
+3. I assumed very little, as the spec covered almost all behaviors. However, there were a few assumptions/design choices:
+
+	a) Flames check for overlapping with walls, rather than whether they intersect with the bounding box of the wall. This choice was made because that's what the spec sounded like it was asking for.
+
+	b) Vaccines left by dead dumb zombies may also intersect the bounding box of walls - this is because the spec said to check if the vaccine would *overlap* with any actors, so I followed it very literally.
+
+	c) For overlap checking, I checked whether or not the Euclidian distance between two actors was less than 10 based on their coordinates - and therefore their lower left corners - rather than the centers of their sprites. This likely has no effect on the game, but the spec didn't say whether to use their coordinates or their visual centers.
+
+	d) Citizens will always prioritize following the player over getting away from zombies if the player is closer. This is implied by the spec, but not explicitly stated. From a logical perspective, I think they would trust the player enough to follow them even when danger is near.
+
+
+4. Tests run for each class
+
+Penelope: 
+For the Penelope class, I just played the game many, many times and tried out every combination of possible situations I could think of. This was the case for movement, landmines, flamethrowers, and vaccines. I would also play the game every time I implemented something in another class that affected or checked against the player to make sure it functioned the same.
+
+Citizen:
+For the Citizen class, I spawned them near zombies to see how they would react, and spawned them near exits to make sure I had implemented their exiting correctly. I also put them in many situations where the player and a zombie was near, to make sure they gravitated toward the player. I also put them on the other side of walls from me, and made sure they were moving against walls correctly.
+
+Zombies:
+For zombies in general, I first froze them to make sure they were vomiting on humans correctly. Once I knew that was working, I then worked on implementing dumb and smart zombies' pathfinding respectively, and moved my player and citizens near and away from them to make sure they were responding appropriately.
+
+Wall:
+This was one of the easiest to test. As soon as I could try to move into them and not move, I knew they were implemented correctly. Their behavior is quit independent of what actor they're checking against, so there weren't very many edge cases that I had to test.
+
+Exit:
+For exits, I just had to make sure that the player could exit when there were no citizens left, and that no other actors (except citizens) would die when overlapping with it. I also had to make sure flames couldn't spawn on it, and indeed they can't.
+
+Pit:
+For pits, I made sure that any sentient actor that overlapped them died as soon as that happened. I did this by leading zombies and citizens over them, and always making sure my player died to them when I made any changes.
+
+Flame:
+The easiest way to test this class was after I implemented landmines and the flamethrower. With those in play, I could aim it at various objects and make sure they were or weren't dying according to the spec.
+
+Vomit:
+The way I tested these was to implement zombies, and then make sure the vomit spawned would infect citizens and the player.
+
+Landmines:
+In testing landmines, I would implement the enter key detection for the player and spawn them in various places. I then took note of how the flames were interacting with the surroundings, and how it would behave when attacked or when it would interact with other actors.
+
+Vaccines, Gas Can, and Landmine Goodies:
+Goodies were another very easy class to test. Once I made the base Goodie class, the only thing left to do was change what inventory stat it increased. Not much testing went into this, only whether the correct item was added when the player overlapped with it and 
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

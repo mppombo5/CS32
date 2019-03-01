@@ -22,8 +22,10 @@
       <change beforePath="$PROJECT_DIR$/../../Project 2/Set.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Project 2/Set.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Project 2/Set.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Project 2/Set.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Project 2/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Project 2/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Actor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Actor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Actor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Actor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StudentWorld.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/StudentWorld.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StudentWorld.h" beforeDir="false" afterPath="$PROJECT_DIR$/StudentWorld.h" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,8 +40,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Actor.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="139" column="2" lean-forward="true" selection-start-line="139" selection-start-column="2" selection-end-line="139" selection-end-column="2" />
+            <state relative-caret-position="459">
+              <caret line="410" lean-forward="true" selection-start-line="410" selection-end-line="410" />
               <folding>
                 <element signature="e#35#59#0" expanded="true" />
               </folding>
@@ -50,8 +52,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Actor.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2527">
-              <caret line="381" column="30" selection-start-line="381" selection-start-column="30" selection-end-line="381" selection-end-column="30" />
+            <state relative-caret-position="390">
+              <caret line="387" column="1" lean-forward="true" selection-start-line="387" selection-start-column="1" selection-end-line="387" selection-end-column="1" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -62,8 +64,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/StudentWorld.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="24" column="23" selection-start-line="24" selection-start-column="23" selection-end-line="24" selection-end-column="23" />
+            <state relative-caret-position="535">
+              <caret line="92" column="25" selection-start-line="92" selection-start-column="25" selection-end-line="92" selection-end-column="25" />
               <folding>
                 <element signature="e#49#71#0" expanded="true" />
               </folding>
@@ -74,8 +76,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/StudentWorld.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="268">
-              <caret line="149" lean-forward="true" selection-start-line="149" selection-end-line="149" />
+            <state relative-caret-position="535">
+              <caret line="370" column="1" selection-start-line="370" selection-start-column="1" selection-end-line="370" selection-end-column="1" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -102,6 +104,9 @@
       <find>decCi</find>
       <find>decCit</find>
       <find>decc</find>
+      <find>m_landmines</find>
+      <find>landmines</find>
+      <find>todo</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -119,16 +124,18 @@
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/main.cpp" />
         <option value="$PROJECT_DIR$/StudentWorld.h" />
-        <option value="$PROJECT_DIR$/Actor.h" />
         <option value="$PROJECT_DIR$/Actor.cpp" />
         <option value="$PROJECT_DIR$/StudentWorld.cpp" />
+        <option value="$PROJECT_DIR$/Actor.h" />
       </list>
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="126" />
+    <option name="y" value="72" />
+    <option name="width" value="1163" />
+    <option name="height" value="764" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -206,12 +213,12 @@
       <workItem from="1551243650094" duration="8497000" />
       <workItem from="1551293830568" duration="847000" />
       <workItem from="1551302269078" duration="40089000" />
-      <workItem from="1551391763402" duration="626000" />
+      <workItem from="1551391763402" duration="10519000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="156208000" />
+    <option name="totallyTimeSpent" value="166101000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -223,14 +230,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="126" y="72" width="1163" height="764" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.13447782" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.38915664" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.38854805" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -386,40 +393,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Actor.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="139" column="2" lean-forward="true" selection-start-line="139" selection-start-column="2" selection-end-line="139" selection-end-column="2" />
-          <folding>
-            <element signature="e#35#59#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/StudentWorld.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="23" selection-start-line="24" selection-start-column="23" selection-end-line="24" selection-end-column="23" />
-          <folding>
-            <element signature="e#49#71#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/StudentWorld.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="149" lean-forward="true" selection-start-line="149" selection-end-line="149" />
+        <state relative-caret-position="535">
+          <caret line="370" column="1" selection-start-line="370" selection-start-column="1" selection-end-line="370" selection-end-column="1" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/StudentWorld.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="535">
+          <caret line="92" column="25" selection-start-line="92" selection-start-column="25" selection-end-line="92" selection-end-column="25" />
+          <folding>
+            <element signature="e#49#71#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Actor.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="410" lean-forward="true" selection-start-line="410" selection-end-line="410" />
+          <folding>
+            <element signature="e#35#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Actor.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2527">
-          <caret line="381" column="30" selection-start-line="381" selection-start-column="30" selection-end-line="381" selection-end-column="30" />
+        <state relative-caret-position="390">
+          <caret line="387" column="1" lean-forward="true" selection-start-line="387" selection-start-column="1" selection-end-line="387" selection-end-column="1" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

@@ -232,15 +232,15 @@ bool StudentWorld::actorWouldGetPukedOn(double destX, double destY) const {
 }
 
 // check if actors are overlapping with a landmine
-bool StudentWorld::actorTriggersLandmine(const Actor *checker) const {
+bool StudentWorld::actorTriggersLandmine(const Actor *landmine) const {
     Penelope* player = getPlayer();
-    if (!player->isDead() && player->overlaps(checker))
+    if (!player->isDead() && player->overlaps(landmine))
         return true;
 
     list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (!actor->isDead() && actor->overlaps(checker) && actor->triggersLandmines())
+        if (!actor->isDead() && actor->overlaps(landmine) && actor->triggersLandmines())
             return true;
     }
     return false;
@@ -251,15 +251,15 @@ bool StudentWorld::actorTriggersLandmine(const Actor *checker) const {
 //// to be called by the respective actors in their doSomething() methods
 
 // check if actors are overlapping with a pit, and kill them if they are
-void StudentWorld::killActorsInPits(const Actor *killer) {
+void StudentWorld::killActorsInPits(const Actor *pit) {
     Penelope* player = getPlayer();
-    if (!player->isDead() && player->overlaps(killer))
+    if (!player->isDead() && player->overlaps(pit))
         player->setDead();
 
     list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (!actor->isDead() && actor->overlaps(killer) && actor->fallsIntoPits()) {
+        if (!actor->isDead() && actor->overlaps(pit) && actor->fallsIntoPits()) {
             actor->setDead();
             // isInfectible doubles as a useful way to tell if it's a citizen.
             if (actor->isInfectible()) {
@@ -271,15 +271,15 @@ void StudentWorld::killActorsInPits(const Actor *killer) {
 }
 
 // next overlap check for actors touching flames
-void StudentWorld::killBurnedActors(const Actor *killer) {
+void StudentWorld::killBurnedActors(const Actor *flame) {
     Penelope* player = getPlayer();
-    if (!player->isDead() && player->overlaps(killer) && player->damagedByFlame())
+    if (!player->isDead() && player->overlaps(flame))
         player->setDead();
 
     list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (!actor->isDead() && actor->overlaps(killer) && actor->damagedByFlame()) {
+        if (!actor->isDead() && actor->overlaps(flame) && actor->damagedByFlame()) {
             actor->setDead();
             if (actor->isInfectible()) {
                 playSound(SOUND_CITIZEN_DIE);
@@ -301,18 +301,20 @@ void StudentWorld::removeExitedCitizens(const Actor *exit) {
     }
 }
 
-void StudentWorld::infectOverlappingActors(const Actor* killer) {
+void StudentWorld::infectOverlappingActors(const Actor* vomit) {
     Penelope* player = getPlayer();
-    if (!player->isDead() && player->overlaps(killer))
+    if (!player->isDead() && player->overlaps(vomit))
         player->infect();
 
     list<Actor*>::iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
-        if (!actor->isDead() && actor->overlaps(killer))
+        if (!actor->isDead() && actor->overlaps(vomit))
             actor->infect();
     }
 }
+
+//// The following functions are proximity checks for zombies and citizens.
 
 // used in Smart Zombies to get the closest person. Is there a better way to do this? Probably.
 Human* StudentWorld::getClosestPersonToZombie(const Zombie* zombie) const {
@@ -324,7 +326,7 @@ Human* StudentWorld::getClosestPersonToZombie(const Zombie* zombie) const {
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
         Actor* actor = *it;
         // important to note: only humans are infectible, so this is a reasonable check for humanity
-        if (!actor->isDead() && actor != zombie && actor->isInfectible()) {
+        if (!actor->isDead() && actor->isInfectible()) {
             double currentDist = zombie->squareDistBetween(zombie->getX(), zombie->getY(), actor);
             if (currentDist < closestDist) {
                 closestPerson = actor;
@@ -341,7 +343,7 @@ Zombie* StudentWorld::getClosestZombieToCitizen(const Citizen *citizen) const {
     // initialize closestZombie to nullptr, check if it's nullptr to see if there are no zombies
     Actor* closestZombie = nullptr;
     double closestDist = 0;
-    bool oneFound = false;
+    bool found = false;
 
     list<Actor*>::const_iterator it;
     for (it = m_actors.begin(); it != m_actors.end(); it++) {
@@ -349,8 +351,8 @@ Zombie* StudentWorld::getClosestZombieToCitizen(const Citizen *citizen) const {
         if (a->isZombie() && !a->isDead()) {
             double currentDist = citizen->squareDistBetween(citizen->getX(), citizen->getY(), a);
             // extra case if
-            if (!oneFound) {
-                oneFound = true;
+            if (!found) {
+                found = true;
                 closestDist = currentDist;
                 closestZombie = a;
             }
@@ -367,45 +369,3 @@ Zombie* StudentWorld::getClosestZombieToCitizen(const Citizen *citizen) const {
         return dynamic_cast<Zombie*>(closestZombie);
     return nullptr;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

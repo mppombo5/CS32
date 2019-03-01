@@ -269,7 +269,6 @@ void Penelope::doSomething() {
         increaseInfection();
     if (infectionCount() >= 500) {
         setDead();
-        getWorld()->playSound(SOUND_PLAYER_DIE);
         return;
     }
 
@@ -343,7 +342,7 @@ void Penelope::doSomething() {
             }
             // vaccine: use a vaccine and cure the user
             case KEY_PRESS_ENTER: {
-                if (m_vaccines > 0) {
+                if (m_vaccines >= 1) {
                     cureInfection();
                     m_vaccines--;
                 }
@@ -351,8 +350,10 @@ void Penelope::doSomething() {
             }
             // landmine: spawn a landmine where the player is standing
             case KEY_PRESS_TAB: {
-                if (m_landmines > 0)
+                if (m_landmines >= 1) {
                     getWorld()->addActor(new Landmine(getX(), getY(), getWorld()));
+                    m_landmines--;
+                }
                 break;
             }
             default: break;
@@ -392,8 +393,6 @@ void Citizen::doSomething() {
 
     // check and respond for infection
     if (isInfected()) {
-        if (infectionCount() == 0)
-            getWorld()->playSound(SOUND_CITIZEN_INFECTED);
         increaseInfection();
         if (infectionCount() >= 500) {
             setDead();
@@ -563,8 +562,10 @@ void Citizen::doSomething() {
         }
 
         // if maxDist never increased, return immediately because it shouldn't move
-        if (maxDist == distZ)
+        if (maxDist == distZ) {
+            paralyze();
             return;
+        }
         // otherwise, move the citizen in the direction that most increased distance
         if (maxDist == dUp) {
             setDirection(up);
@@ -941,19 +942,6 @@ Exit::Exit(double startX, double startY, StudentWorld *world)
 
 /// Accessors ///
 
-// This checks if an actor in StudentWorld has overlapped with this object
-// TODO: move the loop to the StudentWorld class
-/*bool Exit::citExits() const {
-    list<Actor*> actors = getWorld()->getActors();
-    list<Actor*>::iterator it;
-
-    for (it = actors.begin(); it != actors.end(); it++) {
-        if ((*it)->exits(this))
-            return true;
-    }
-    return false;
-}*/
-
 bool Exit::playerExits() const {
     return getWorld()->getPlayer()->exits(this);
 }
@@ -966,7 +954,6 @@ bool Exit::detectsExits() const {
 /// Mutators ///
 
 void Exit::doSomething() {
-    // TODO: check for citizens exiting, implement once citizens are
     getWorld()->removeExitedCitizens(this);
 
     if (playerExits() && getWorld()->citsLeft() == 0) {
@@ -1218,39 +1205,3 @@ LandmineGoodie::LandmineGoodie(double startX, double startY, StudentWorld *world
 void LandmineGoodie::addToInventory() {
     getWorld()->getPlayer()->addLandmines();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
