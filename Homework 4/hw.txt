@@ -1,0 +1,13 @@
+2. The reason this main routine fails when you insert a Coord into a Set of Coords is that not all appropriate operators are defined in the Coord class. Specifically, Set::insert and Set::findFirstAtLeast use the == and < operators. In order to use Coord in a Set, you would first have to define its operator== and operator<.
+
+
+4. a) The big-O of this algorithm is O(N^3). In the worst-case scenario of every usage, the highest-degree term is the for loop with i. This for loop has to loop through another N^2 times for j, and j has to loop through the k loop N times. This results in an equation looking like O(N^3 + N^2 + N), and since we drop non-significant terms for large values of N, we say the complexity is O(N^3).
+
+   b) The big-O of this algorithm is still O(N^3). When you have a for loop like this one, where the second loop's limit depends on the first loop, the big-O is still O(N^2). This is not to say that it's as efficient as the first draft, though, because you're still cutting the number of instructions in half - the big-O is the same because we ignore coefficients when calculating it.
+
+
+5. a) This algorithm is O(N^2). The only loop we are concerned about is the k loop at the end, and within that k loop the get() function also has a for loop, and in the worst-case scenario it will iterate through N items.
+
+   b) With all for and while loops in the algorithm, one would end up with 4N from iterating through the set. Halfway through, however, there is an O(NlogN) algorithm to sort the set. Since we drop all non-significant terms from the big-O calculation, we say that the big-O of this algorithm is O(NlogN).
+
+   c) This algorithm has complexity O(N). The only traversals are simple while and for loops; since none of them are nested within each other, and they only occur once, a total of roughly 2N instructions gives us a big-O of O(N).

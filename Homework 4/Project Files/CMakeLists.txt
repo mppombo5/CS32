@@ -3,4 +3,5 @@ project(Project_Files)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Project_Files testSet.cpp Set.h)
+add_executable(Set testSet.cpp Set.h)
+add_executable(List list.cpp)
