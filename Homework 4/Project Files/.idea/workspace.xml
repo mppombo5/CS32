@@ -18,8 +18,7 @@
       <change beforePath="$PROJECT_DIR$/../../Homework 1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Homework 1/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Homework 2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Homework 2/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Homework 3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Homework 3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sorts.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/sorts.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/list.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/list.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Project 1/ClubZombie/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Project 1/ClubZombie/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Project 1/ClubZombie/History.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Project 1/ClubZombie/History.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Project 2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Project 2/.idea/workspace.xml" afterDir="false" />
@@ -51,7 +50,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/testSet.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
+            <state relative-caret-position="315">
               <caret line="24" selection-start-line="24" selection-end-line="24" />
               <folding>
                 <element signature="e#50#66#0" expanded="true" />
@@ -60,22 +59,19 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/list.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="750">
-              <caret line="50" column="33" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
-              <folding>
-                <element signature="e#50#69#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="165">
+              <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sorts.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="616">
+            <state relative-caret-position="-509">
               <caret line="164" column="6" selection-start-line="164" selection-start-column="6" selection-end-line="164" selection-end-column="6" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
@@ -95,16 +91,18 @@
         <option value="$PROJECT_DIR$/main.cpp" />
         <option value="$PROJECT_DIR$/Set.h" />
         <option value="$PROJECT_DIR$/testSet.cpp" />
-        <option value="$PROJECT_DIR$/list.cpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/sorts.cpp" />
+        <option value="$PROJECT_DIR$/list.cpp" />
       </list>
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="84" />
+    <option name="y" value="80" />
+    <option name="width" value="1163" />
+    <option name="height" value="764" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -144,7 +142,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Sorts">
+  <component name="RunManager" selected="Application.List">
     <configuration name="List" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Project_Files" TARGET_NAME="List" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Project_Files" RUN_TARGET_NAME="List">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -179,28 +177,29 @@
       <workItem from="1551686746849" duration="3900000" />
       <workItem from="1551755168496" duration="1762000" />
       <workItem from="1551781573321" duration="3791000" />
-      <workItem from="1551832024465" duration="1384000" />
+      <workItem from="1551832024465" duration="5874000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10837000" />
+    <option name="totallyTimeSpent" value="15327000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="84" y="80" width="1163" height="764" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14949928" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18644068" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31686747" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.29166666" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.4060241" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.4047619" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="11" />
@@ -269,9 +268,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sorts.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-509">
+          <caret line="164" column="6" selection-start-line="164" selection-start-column="6" selection-end-line="164" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/testSet.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
+        <state relative-caret-position="315">
           <caret line="24" selection-start-line="24" selection-end-line="24" />
           <folding>
             <element signature="e#50#66#0" expanded="true" />
@@ -281,21 +290,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/list.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="50" column="33" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
-          <folding>
-            <element signature="e#50#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sorts.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="616">
-          <caret line="164" column="6" selection-start-line="164" selection-start-column="6" selection-end-line="164" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
         </state>
       </provider>
     </entry>
