@@ -128,7 +128,18 @@ void insertion_sort(vector<Store>& s, bool comp(const Store&, const Store&))
     //       parameter comp.
     //       DONE
 
-    for (int i = 2; i <= s.size(); i++) {
+    for (int i = 1; i < s.size(); i++) {
+        Store toBeSorted = s[i];
+        int j = i-1;
+
+        while (j >= 0 && comp(toBeSorted, s[j])) {
+            s[j+1] = s[j];
+            j--;
+        }
+        s[j+1] = toBeSorted;
+    }
+
+    /*for (int i = 2; i <= s.size(); i++) {
         Store toBeSorted = s[i-1];
 
         int k = i - 2;
@@ -137,7 +148,7 @@ void insertion_sort(vector<Store>& s, bool comp(const Store&, const Store&))
             i--;
         }
         s[i+1] = toBeSorted;
-    }
+    }*/
 
     // Note:  The insertion sort algorithm on pp. 312-313 of the Carrano
     // book 6th edition is incorrect; someone made a change from the 5th
@@ -150,8 +161,8 @@ void insertion_sort(vector<Store>& s, bool comp(const Store&, const Store&))
 
     // Note that if comp(x,y) is true, it means x must end up before y in the
     // final ordering.
-    if (s.size() == 2  &&  comp(s[1], s[0]))
-        swap(s[0], s[1]);
+    //if (s.size() == 2  &&  comp(s[1], s[0]))
+    //    swap(s[0], s[1]);
 }
 
   // Report the results of a timing test
