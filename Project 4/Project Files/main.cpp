@@ -1,6 +1,10 @@
+//
+// Created by Matthew Pombo on 2019-03-11.
+//
+
 #include <iostream>
+using namespace std;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+
 }

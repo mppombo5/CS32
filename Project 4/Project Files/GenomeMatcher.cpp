@@ -1,4 +1,5 @@
 #include "provided.h"
+#include "Trie.h"
 #include <string>
 #include <vector>
 #include <iostream>
