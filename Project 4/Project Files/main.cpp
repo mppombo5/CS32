@@ -5,6 +5,7 @@
 #include "Trie.h"
 #include "provided.h"
 #include <iostream>
+#include <cassert>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -28,7 +29,7 @@ int main() {
         cout << results[i] << ' ';
     }*/
 
-    string filename = "/Users/mpombo/Desktop/Q2 Classes/CS 32/Projects/Project 4/data/Halobacterium_jilantaiense.txt";
+    string filename = "/Users/mpombo/Desktop/Q2 Classes/CS 32/Projects/Project 4/data/TestData.txt";
 
     ifstream infile(filename);
     if (!infile) {
@@ -43,11 +44,22 @@ int main() {
         for (int i = 0; i < genomes.size(); i++) {
             cout << genomes[i].name() << ", length " << genomes[i].length() << endl;
         }
-        return 0;
     }
     else {
         cout << "Error loading genome data." << endl;
         return 1;
     }
 
+    Genome g1 = genomes[0];
+    string f1, f2, f3, f4;
+    bool result1 = g1.extract(0, 5, f1);
+    bool result2 = g1.extract(74, 6, f2);
+    bool result3 = g1.extract(74, 7, f3);
+    bool result4 = g1.extract(0, 1, f4);
+    assert(f1 == "GCTCG");
+    assert(f2 == "CTGGGA");
+    assert(!result3);
+    assert(f4 == "G");
+    cout << "All tests passed!" << endl;
+    return 0;
 }

@@ -79,18 +79,17 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes) {
 
         }
     }
-    // final check to see if there's still a genome of name, sequence that needs to be added
+    // at the end of the file, there should be a genome sequence that still needs to be added.
     if (!name.empty()) {
         if (!sequence.empty()) {
             temp.emplace_back(name, sequence);
             genomes = temp;
             return true;
         }
-        else
-            return false;
+        return false;
     }
-    genomes = temp;
-    return true;
+    // if this is reached, there was an error.
+    return false;
 }
 
 int GenomeImpl::length() const {
@@ -102,7 +101,13 @@ string GenomeImpl::name() const {
 }
 
 bool GenomeImpl::extract(int position, int length, string& fragment) const {
-    return false;  // This compiles, but may not be correct
+    // this is the check to see if this function reaches past the sequence's end
+    // or if something else fishy is going on
+    if (position + length > m_length || position < 0 || length < 0)
+        return false;
+
+    fragment = m_sequence.substr((size_t) position, (size_t) length);
+    return true;
 }
 
 //******************** Genome functions ************************************
