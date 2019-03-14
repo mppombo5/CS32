@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <algorithm>
 
 template<typename ValueType>
 class Trie
@@ -20,7 +19,8 @@ public:
     Trie& operator=(const Trie&) = delete;
     // don't add any other public members
 private:
-    // structure for node - each one must have a list of values and a list of children, and a list of the children's labels
+    // structure for node - each one must have a list of values and a list of children,
+    // and a list of the children's labels
     struct Node {
         char label;
         std::vector<ValueType> values;
@@ -63,7 +63,8 @@ void Trie<ValueType>::reset() {
 }
 
 template <typename ValueType>
-void Trie<ValueType>::insertFromNode(Trie<ValueType>::Node *p, const std::string &key, int keyPos, const ValueType &value) {
+void Trie<ValueType>::insertFromNode(Trie<ValueType>::Node *p, const std::string &key,
+                                     int keyPos, const ValueType &value) {
     if (keyPos > key.size())
         return;
 
