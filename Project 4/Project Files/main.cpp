@@ -30,6 +30,7 @@ int main() {
     }*/
 
     string filename = "/Users/mpombo/Desktop/Q2 Classes/CS 32/Projects/Project 4/data/TestData.txt";
+    string filename2 = "/Users/mpombo/Desktop/Q2 Classes/CS 32/Projects/Project 4/data/Ferroglobus_placidus.txt";
 
     ifstream infile(filename);
     if (!infile) {
@@ -46,7 +47,7 @@ int main() {
         }
     }
     else {
-        cout << "Error loading genome data." << endl;
+        cout << "Error loading genome data in first file." << endl;
         return 1;
     }
 
@@ -61,5 +62,23 @@ int main() {
     assert(!result3);
     assert(f4 == "G");
     cout << "All tests passed!" << endl;
+
+    ifstream infile2(filename2);
+    if (!infile2) {
+        cout << "Cannot find the second file!" << endl;
+        return 1;
+    }
+    success = Genome::load(infile2, genomes);
+
+    if (success) {
+        cout << "Loaded " << genomes.size() << " genomes successfully:" << endl;
+        for (int i = 0; i < genomes.size(); i++) {
+            cout << genomes[i].name() << ", length " << genomes[i].length() << endl;
+        }
+    }
+    else {
+        cout << "Error loading genome data in second file." << endl;
+        return 1;
+    }
     return 0;
 }

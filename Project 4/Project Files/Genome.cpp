@@ -64,19 +64,24 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes) {
                 return false;
             for (int i = 0; i < s.size(); i++) {
                 // return false if a char is not A, G, T, C, or N.
-                switch (toupper(s[i])) {
+                switch (s[i]) {
                     case 'A':
                     case 'G':
                     case 'T':
                     case 'C':
                     case 'N':
+                        sequence += s[i];
+                        continue;
+                    case 'a':
+                    case 'g':
+                    case 't':
+                    case 'c':
+                    case 'n':
+                        sequence += (char) toupper(s[i]);
                         continue;
                     default: return false;
                 }
             }
-            // if this point has been reached, the string is valid and should be concatenated onto sequence.
-            sequence += s;
-
         }
     }
     // at the end of the file, there should be a genome sequence that still needs to be added.
