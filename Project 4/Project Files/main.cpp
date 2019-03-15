@@ -13,7 +13,7 @@
 using namespace std;
 
 int main() {
-    /*Trie<int> iTrie;
+    Trie<int> iTrie;
     iTrie.insert("ACTGGTA", 42);
     iTrie.insert("ACTGGTA", 3);
     iTrie.insert("ACTGGTAC", 93);
@@ -27,10 +27,10 @@ int main() {
     vector<int> results = iTrie.find("ACTGGTA", exact);
     for (int i = 0; i < results.size(); i++) {
         cout << results[i] << ' ';
-    }*/
+    }
 
-    string filename = "/Users/mpombo/Desktop/Q2 Classes/CS 32/Projects/Project 4/data/TestData.txt";
-    string filename2 = "/Users/mpombo/Desktop/Q2 Classes/CS 32/Projects/Project 4/data/Ferroglobus_placidus.txt";
+    string filename = "../data/TestData.txt";
+    string filename2 = "../data/Ferroglobus_placidus.txt";
 
     ifstream infile(filename);
     if (!infile) {
@@ -57,11 +57,10 @@ int main() {
     bool result2 = g1.extract(74, 6, f2);
     bool result3 = g1.extract(74, 7, f3);
     bool result4 = g1.extract(0, 1, f4);
-    assert(f1 == "GCTCG");
-    assert(f2 == "CTGGGA");
+    assert(result1 && f1 == "GCTCG");
+    assert(result2 && f2 == "CTGGGA");
     assert(!result3);
-    assert(f4 == "G");
-    cout << "All tests passed!" << endl;
+    assert(result4 && f4 == "G");
 
     ifstream infile2(filename2);
     if (!infile2) {
@@ -80,5 +79,9 @@ int main() {
         cout << "Error loading genome data in second file." << endl;
         return 1;
     }
-    return 0;
+    cout << "All tests passed!" << endl;
+
+    for (int i = 0, j = 1; i < 10; i++, j++) {
+        cout << i << ' ' << j << endl;
+    }
 }
