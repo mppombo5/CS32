@@ -259,7 +259,7 @@ void showMenu()
     cout << "         e - find matches exactly           q - quit" << endl;
 }
 
-int main1()
+int main()
 {
     const int defaultMinSearchLength = 10;
 

@@ -20,7 +20,6 @@ public:
                             vector<GenomeMatch>& results) const;
 private:
     int m_minSL;
-    vector<Genome> m_genomes1;
     unordered_map<string, Genome> m_genomes;
       //struct to hold a genome's name and the relevant position in the Trie
     struct GenomeBucket {
@@ -110,8 +109,40 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
                     mismatchAllowed = false;
                 }
             }
+            // at the end of this, subFragment will have the string of the longest match between fragment
+            // and the genome sequence segment
+            DNAMatch match;
+            match.genomeName = initialHits[i].name;
+            match.position = initialHits[i].position;
+            match.length = subFragmentSize;
+            // due to the way values are inserted into the trie, the last value
+            // should be the only one we have to compare against.
+
+            // if genomeMatches is empty, just add match.
+            if (genomeMatches.empty())
+                genomeMatches.push_back(match);
+            else {
+                DNAMatch lastMatch = genomeMatches[genomeMatches.size()-1];
+
+                // if it's a different genome we're working with, just add it.
+                if (lastMatch.genomeName != match.genomeName)
+                    genomeMatches.push_back(match);
+                else {
+                    // if a larger match was found within the genome, update the longest match to the current match.
+                    if (match.length > lastMatch.length) {
+                        lastMatch.length = match.length;
+                        lastMatch.position = match.position;
+                    }
+                    // otherwise, if the current match's position is earlier, update lastMatch to current match.
+                    if (match.position < lastMatch.position) {
+                        lastMatch.position = match.position;
+                    }
+                }
+            }
         }
     }
+    matches = genomeMatches;
+    return true;
 }
 
 bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatchLength,
