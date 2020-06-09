@@ -6,7 +6,7 @@ This is my repository for Intro to Computer Science II (Object-Oriented Programm
 
 ## Project Scores
 
-Unfortunately, Prof. Smallberg has a habit of deleting the course website once the quarter is over, so I can't provide links to the website or the actual project specs. The table below includes a brief description of each project so you can get idea of what the goal was. (Admittedly, the description might not be 100% accurate since I'm going off of my memory from 2.5 years ago.)
+Unfortunately, Prof. Smallberg has a habit of deleting the course website once the quarter is over, so I can't provide links to the website or the actual project specs. The table below includes a brief description of each project so you can get idea of what the goal was. (Admittedly, the description might not be 100% accurate since I'm going off of my memory from 1.5 years ago.)
 
 | Project | Grade | Brief Description |
 |:-------:|:-----:|-------------------|
