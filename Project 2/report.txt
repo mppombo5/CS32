@@ -1,0 +1,37 @@
+Linked List Implementation
+
+Within the class Set, my Node struct contains an ItemType object, a pointer to the node's next node, and a pointer to the node's previous node. Set's other private members consist of a pointer to the first node (a dummy node), and a pointer to the last node in the linked list. I used a dummy pointer for the head nodes, because this removes most if not all of the special case checks for if the list is empty: now, if the list is empty, we can simply check if the head's next pointer is the null pointer. This also makes the process of deleting the objects much easier, as we can always start one ahead of the dummy node and keep deleting the previous object.
+
+
+
+Pseudocode for Non-Trivial Algorithms
+
+The algorithms I consider to be non-trivial are insert, erase, and get. I will also include pseudocode for unite and subtract.
+
+bool Set::insert(const ItemType& value)
+    return false if the list already contains value
+
+    allocate a new node and store value in it
+    set the existing tail's next pointer to the new node
+    set the new node's next pointer to nullptr, set the previous to the old tail
+    set the tail to the new node
+    increment the size of the set and return true
+
+bool Set::erase(const ItemType& value)
+    return false if the set is empty
+
+    traverse through the array, and if the list contains value:
+	create a pointer, target, to the target value
+	set target's previous node's next pointer to target's next node
+	if target isn't the last value, set the next node's previous pointer to target's previous node
+	otherwise, set the tail to target's previous pointer
+	decrement the list's size and return true
+    otherwise, return false
+
+bool Set::get(int pos, ItemType& value)
+    if pos is not contained within [0,m_size), return false
+    traverse through the array, and on each iteration make a new counter int and choose one value temp to compare
+	every time you encounter a value that's lower than temp, add one to the counter
+	if counter is equal to pos at the end of the loop, copy temp into value
+
+void unite(const Set& s1, const Set& s2, Set& result)

@@ -647,6 +647,8 @@ Zombie* getClosestZombieToCitizen(const Citizen* citizen):
 
 2. To my knowledge, there are no missing features or unfinished implementations. The only bug I notice is that citizens seem to spazz out when in the presence of both the player and an encroaching zombie, but it doesn't affect gameplay and on the whole still adheres to the spec.
 
+=======================================================
+
 
 3. I assumed very little, as the spec covered almost all behaviors. However, there were a few assumptions/design choices:
 
@@ -657,6 +659,8 @@ Zombie* getClosestZombieToCitizen(const Citizen* citizen):
 	c) For overlap checking, I checked whether or not the Euclidian distance between two actors was less than 10 based on their coordinates - and therefore their lower left corners - rather than the centers of their sprites. This likely has no effect on the game, but the spec didn't say whether to use their coordinates or their visual centers.
 
 	d) Citizens will always prioritize following the player over getting away from zombies if the player is closer. This is implied by the spec, but not explicitly stated. From a logical perspective, I think they would trust the player enough to follow them even when danger is near.
+
+=======================================================
 
 
 4. Tests run for each class
@@ -689,34 +693,7 @@ Landmines:
 In testing landmines, I would implement the enter key detection for the player and spawn them in various places. I then took note of how the flames were interacting with the surroundings, and how it would behave when attacked or when it would interact with other actors.
 
 Vaccines, Gas Can, and Landmine Goodies:
-Goodies were another very easy class to test. Once I made the base Goodie class, the only thing left to do was change what inventory stat it increased. Not much testing went into this, only whether the correct item was added when the player overlapped with it and 
+Goodies were another very easy class to test. Once I made the base Goodie class, the only thing left to do was change what inventory stat it increased. Not much testing went into this, only whether the correct item was added when the player overlapped with it and if they were destroyed upon being attacked by flames.
 
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+StudentWorld:
+The testing for StudentWorld specifically was mostly done in the init, move, and cleanup functions. For these, I would load different level files, rename the files, play the game to determine whether it as initializing correctly, and generally make situations to make sure the right game status was being returned. Apart from these functions, most of the functions in StudentWorld just serve to compare and get information about the world and its actors that's used in the actors' various implementations. The testing for these functions wasn't done directly to the world, but rather in the testing of the actors and how they responded to the usage of the functions.

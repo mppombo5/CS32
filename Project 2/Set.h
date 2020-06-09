@@ -15,7 +15,7 @@ public:
     Set(const Set& src);
     Set& operator=(const Set& src);
     bool empty() const;
-    int size() const;
+    int  size() const;
     bool insert(const ItemType& value);
     bool erase(const ItemType& value);
     bool contains(const ItemType& value) const;

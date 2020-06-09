@@ -1,0 +1,90 @@
+1. My Trie and Genome classes are implemented well, but my GenomeMatcher class leaves a lot to be desired. I was able to implement addGenome, but findGenomesWithThisDNA is very poorly implemented, if it works at all. Additionally, unless I have an inexplicable stroke of genius within the next 10 minutes, findRelatedGenomes is not implemented at all.
+
+
+2. I believe all my functions run within the specified time complexity requirements. The only function for which I'm not entirely sure is Genome::load; when I'm adding each line to the genome's sequence, I run through the entire string if it's not a name line. This takes O(n) time to complete, but I'm not sure what the time complexity of getline(genomeSource, s) is.
+
+
+3. My Trie::find() function calls my (private) helper function, findFromNode(). When calling find() I just make sure that the key is not empty, and then call findFromNode. What follows is my pseudocode for findFromNode():
+
+void Trie<ValueType>::findFromNode(Trie<ValueType>::Node* p, const std::string& key, int keyPos, bool exactMatchOnly, std::vector<ValueType>& targetVector) const
+
+    if keyPos is greater than key's size, return out.
+
+    if keyPos is equal to key's size:
+
+        for each value in p's values vector, push that value onto targetVector.
+
+    if p has no children, return out.
+
+    initialize a char keyChar to the character at position keyPos of key.
+
+    if keyPos is 0:
+
+        if one of p's children's labels matches keyChar, call findFromNode on that child node.
+
+        otherwise, return out.
+
+    otherwise:
+
+        if exactMatchOnly is true:
+
+	    if one of p's children has a label equal to keyChar, call insertFromNode from that child.
+
+	    otherwise, return out.
+
+	otherwise:
+
+	    call insertFromNode on each of p's children. if the child's label matches keyChar, call it with exactMatchOnly false, and true otherwise.
+
+end insertFromNode
+
+
+What follows is my (admittedly shoddy and broken) implementation of findGenomesWithThisDNA.
+
+bool findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches
+
+    if fragment's size is less than minimumLength or minimumLength is less than GenomeMatcher's minimum search length, return false.
+
+    initialize a vector of GenomeBuckets (position and genome name) called initialHits.
+
+    initialize a vector DNAMatches called genomeMatches.
+
+    if initialHits is empty, return false.
+
+    for each GenomeBucket in initialHits:
+
+	initialize a string subFragment
+
+	if extract(initialHits[i].position, fragment.size(), subFragment) on the associated genome returns true:
+
+	    initialize an int subFragmentSize to 0.
+
+	    initialize a bool mismatchAllowed to the opposite of exactMatchOnly
+
+	    for each character in subFragment:
+
+		if that character of subFragment is equal to the associated character in fragment, increment subFragmentSize
+
+		otherwise:
+
+		    if mismatchAllowed is false, break; otherwise, increment subFragmentSize and set mismatchAllowed to false.
+
+	    initialize a DNAMatch called match
+
+	    set its name and position to the name and position of the current initialHits GenomeBucket, and its length to subFragmentSize.
+
+	    if genomeMatches is empty, push match onto it.
+
+	    otherwise:
+
+		initialize a DNAMatch lastMatch and set it to the last element of genomeMatches.
+
+		if lastMatch's genome's name is not match's genome's name, push match onto genomeMatches.
+
+		otherwise:
+
+		    if match's length is greater than lastMatch's length, update lastMatch's info to current match's info
+
+		    if match's position is less than lastMatch's position, set lastMatch's position equal to match's position.
+
+    set matches equal to genomeMatches and return true.

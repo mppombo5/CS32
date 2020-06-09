@@ -1,0 +1,128 @@
+1. a) What follows is a tree representation using the second form in the homework:
+
+      50
+        20
+          10
+            xx
+            15
+          40
+            30
+              25
+              38
+            xx
+        60
+          xx
+          70
+            65
+            80
+              72
+              xx
+
+   b) Outputs for pre-order, in-order, and post order traversals:
+
+Pre-order       In-order        Post-order
+50		10		15
+20		15		10
+10		20		25
+15		25		38
+40		30		30
+30		38		40
+25		40		20
+38		50		65
+60		60		72
+70		65		80
+65		70		70
+80		72		60
+72		80		50
+
+   c) The binary search tree after deleting 30 then 20 is as follows:
+      50
+        15
+          10
+          40
+            38
+              25
+              xx
+              xx
+        60
+          xx
+          70
+            65
+            80
+              72
+              xx
+
+
+2. a) struct for a binary tree node with child and parent pointers:
+      struct Node {
+          int   value;
+          Node* parent;
+          Node* left;
+          Node* right;
+      };
+
+   b) Pseudocode to insert a new node into a BST with parent pointers:
+
+initialize a temp node pointer with the value of interest.
+
+if the root pointer is nullptr, set it to the new node and return.
+
+otherwise, point our temp node to the root node.
+
+while the current node pointer is not equal to nullptr:
+
+    if value is less than the current node's value:
+
+	if the current node's left pointer is the nullptr:
+
+	    set the current node's left pointer to our temp node
+
+	    set our temp node's parent pointer to the current node and return.
+
+	otherwise, update the current node to the current node's left pointer.
+
+    if value is less than the current node's value:
+
+	if the current node's right pointer is the nullptr:
+
+	    set the current node's right pointer to our temp node
+
+	    set our temp node's parent pointer to the current node and return.
+
+	otherwise, update the current node to the current node's right pointer.
+
+
+3. a) Heap after inserting and removing:
+
+      7
+        3
+          0
+          2
+        6
+          4
+          x
+
+   b) The heap as an array:
+
+      [7, 3, 6, 0, 2, 4]
+
+   c) The heap as an array after removing 7:
+
+      [6, 3, 4, 0, 2]
+
+
+4. a) O(C + S)
+
+   b) O(logC + S)
+
+   c) O(logC + logS)
+
+   d) O(logS)
+
+   e) O(1)
+
+   f) O(logC + S)
+
+   g) O(SlogS)
+
+   h) O(ClogS)

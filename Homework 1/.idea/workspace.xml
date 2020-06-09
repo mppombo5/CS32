@@ -13,7 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="05dbb403-6052-42f6-87de-96a74a7ce5d9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 1/ClubZombie/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Project 1/ClubZombie/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Project 1/ClubZombie/History.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Project 1/ClubZombie/History.h" afterDir="false" />
     </list>
@@ -107,7 +107,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/newSet.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="482">
+            <state relative-caret-position="2085">
               <caret line="139" column="1" selection-start-line="139" selection-start-column="1" selection-end-line="139" selection-end-column="1" />
               <folding>
                 <element signature="e#49#68#0" expanded="true" />
@@ -118,7 +118,11 @@
       </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" column="50" lean-forward="true" selection-start-line="5" selection-start-column="50" selection-end-line="5" selection-end-column="50" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -172,7 +176,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -184,6 +187,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -227,18 +231,18 @@
       <workItem from="1547882529665" duration="224000" />
       <workItem from="1548192744302" duration="6690000" />
       <workItem from="1548207764575" duration="6688000" />
-      <workItem from="1548225363138" duration="1972000" />
+      <workItem from="1548225363138" duration="2010000" />
+      <workItem from="1548266351613" duration="41000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="29776000" />
+    <option name="totallyTimeSpent" value="29855000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="57" y="61" width="1287" height="757" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18232931" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18473895" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -271,27 +275,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/newSet.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="23" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testnewSet.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testSet.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp" />
     <entry file="file://$PROJECT_DIR$/Set.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -299,7 +283,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testSSNSet.cpp">
+    <entry file="file://$PROJECT_DIR$/Set.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="16" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testSet.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
@@ -320,23 +311,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Set.cpp">
+    <entry file="file://$PROJECT_DIR$/testSSNSet.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="16" />
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
+    <entry file="file://$PROJECT_DIR$/newSet.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        <state relative-caret-position="120">
+          <caret line="8" column="23" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/newSet.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="482">
+        <state relative-caret-position="2085">
           <caret line="139" column="1" selection-start-line="139" selection-start-column="1" selection-end-line="139" selection-end-column="1" />
           <folding>
             <element signature="e#49#68#0" expanded="true" />
@@ -344,8 +335,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/testnewSet.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="50" lean-forward="true" selection-start-line="5" selection-start-column="50" selection-end-line="5" selection-end-column="50" />
+        </state>
+      </provider>
     </entry>
   </component>
 </project>

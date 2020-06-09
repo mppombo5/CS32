@@ -162,6 +162,16 @@ int main() {
     assert(q.size() == 4);
     assert(!q.contains("bro") && !q.contains("5am"));
 
+    Set l(q);
+    ItemType itemL;
+    ItemType itemQ;
+    for (int i = 0; i < q.size(); i++) {
+        l.get(i, itemL);
+        q.get(i, itemQ);
+        assert(itemQ == itemL);
+    }
+    assert(l.size() == q.size());
+
     cout << "Passed all tests" << endl;
 
     /////////////////
